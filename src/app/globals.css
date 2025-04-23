@@ -1,26 +1,175 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-*: initial;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-jetbrains-mono);
+  --font-mono: var(--font-jetbrains-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-editor-scrollbar-track: var(--editor-scrollbar-track);
+  --color-editor-scrollbar-thumb: var(--editor-scrollbar-thumb);
+  --color-editor-active-line-indicator: var(--editor-active-line-indicator);
+  --color-editor-gutter-border: var(--editor-gutter-border);
+  --color-editor-line-hover-bg: var(--editor-line-hover-bg);
+  --color-editor-line-number-border: var(--editor-line-number-border);
+  --color-editor-line-number: var(--editor-line-number);
+  --color-editor-header-border: var(--editor-header-border);
+  --color-editor-header-background: var(--editor-header-background);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-full: 9999px;
+  --ring-inset: inset 0 0 0 1px;
+  --ring-offset-width: 0px;
+  --ring-offset-color: #fff;
+  --ring-color: #2563eb;
+  --ring-offset-shadow: 0 0 #0000;
+  --ring-shadow: 0 0 #0000;
+  --box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 6%);
+  --box-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+  --box-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -2px rgb(0 0 0 / 5%);
+  --box-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 10%), 0 10px 10px -5px rgb(0 0 0 / 4%);
+  --box-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 25%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.375rem;
+
+  /* Base Colors */
+  --background: oklch(0.15 0.02 260);
+  --foreground: oklch(0.9 0.01 260);
+
+  /* Card */
+  --card: oklch(0.2 0.03 260);
+  --card-foreground: oklch(0.9 0.01 260);
+
+  /* Popover */
+  --popover: oklch(0.2 0.03 260);
+  --popover-foreground: oklch(0.9 0.01 260);
+
+  /* Primary */
+  --primary: oklch(0.85 0.25 300);
+  --primary-foreground: oklch(0.15 0.02 260);
+
+  /* Secondary */
+  --secondary: oklch(0.25 0.03 260);
+  --secondary-foreground: oklch(0.9 0.01 260);
+
+  /* Muted */
+  --muted: oklch(0.25 0.03 260);
+  --muted-foreground: oklch(0.6 0.02 260);
+
+  /* Accent */
+  --accent: oklch(0.85 0.25 300);
+  --accent-foreground: oklch(0.15 0.02 260);
+
+  --success: oklch(0.7 0.3 120);
+  --success-foreground: oklch(0.9 0.01 260);
+
+  --warning: oklch(0.743 0.182 56.011);
+  --warning-foreground: oklch(0.9 0.01 260);
+
+
+  /* Destructive */
+  --destructive: oklch(0.7 0.3 27);
+  --destructive-foreground: oklch(0.9 0.01 260);
+
+  /* Borders */
+  --border: oklch(0.275 0.045 260 / 0.9);
+  --input: oklch(0.2 0.02 260 / 0.3);
+  --ring: oklch(0.85 0.25 300);
+
+  /* Charts */
+  --chart-1: oklch(0.75 0.25 300);
+  --chart-2: oklch(0.7 0.2 220);
+  --chart-3: oklch(0.8 0.22 180);
+  --chart-4: oklch(0.75 0.18 120);
+  --chart-5: oklch(0.75 0.25 27);
+
+  /* Sidebar */
+  --sidebar: oklch(0.2 0.03 260);
+  --sidebar-foreground: oklch(0.9 0.01 260);
+  --sidebar-primary: oklch(0.85 0.25 300);
+  --sidebar-primary-foreground: oklch(0.15 0.02 260);
+  --sidebar-accent: oklch(0.25 0.03 260);
+  --sidebar-accent-foreground: oklch(0.9 0.01 260);
+  --sidebar-border: oklch(0.25 0.03 260 / 0.4);
+  --sidebar-ring: oklch(0.85 0.25 300);
+  --sidebar-width: 20rem;
+
+  /* Editor */
+  --editor-background: oklch(0.2 0.03 260 / 0.1);
+  --editor-header-background: oklch(0.2 0.03 260 / 0.3);
+  --editor-header-border: oklch(0.275 0.045 260 / 0.9);
+  --editor-line-number: oklch(0.6 0.02 260 / 0.7);
+  --editor-line-number-border: oklch(0.275 0.045 260 / 0.4);
+  --editor-line-hover-bg: oklch(0.25 0.03 260 / 0.3);
+  --editor-gutter-border: oklch(0.275 0.045 260 / 0.4);
+  --editor-active-line-indicator: oklch(0.85 0.25 300);
+  --editor-copy-success: oklch(0.7 0.3 120);
+  --editor-scrollbar-thumb: oklch(0.3 0.05 260);
+  --editor-scrollbar-track: oklch(0.15 0.02 260 / 0.4);
+  --editor-glass-effect: linear-gradient(
+          to bottom right,
+          oklch(0.2 0.03 260 / 0.8),
+          oklch(0.18 0.025 260 / 0.6)
+  );
+}
+
+.dark {}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50 font-sans transition-colors duration-200;
+  }
+  body {
+    @apply bg-background text-foreground dark:text-foreground font-mono;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  :root {}
+
+  .dark {}
 }

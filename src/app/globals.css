@@ -100,18 +100,17 @@
   --muted-foreground: oklch(0.6 0.02 260);
 
   /* Accent */
-  --accent: oklch(0.85 0.25 300);
+  --accent: oklch(0.85 0.3 300);
   --accent-foreground: oklch(0.15 0.02 260);
 
-  --success: oklch(0.7 0.3 120);
+  --success: oklch(0.7 0.8 122);
   --success-foreground: oklch(0.9 0.01 260);
 
   --warning: oklch(0.743 0.182 56.011);
   --warning-foreground: oklch(0.9 0.01 260);
 
-
   /* Destructive */
-  --destructive: oklch(0.7 0.3 27);
+  --destructive: oklch(0.7 0.3 25);
   --destructive-foreground: oklch(0.9 0.01 260);
 
   /* Borders */
@@ -138,25 +137,24 @@
   --sidebar-width: 20rem;
 
   /* Editor */
-  --editor-background: oklch(0.2 0.03 260 / 0.1);
-  --editor-header-background: oklch(0.2 0.03 260 / 0.3);
-  --editor-header-border: oklch(0.275 0.045 260 / 0.9);
-  --editor-line-number: oklch(0.6 0.02 260 / 0.7);
-  --editor-line-number-border: oklch(0.275 0.045 260 / 0.4);
-  --editor-line-hover-bg: oklch(0.25 0.03 260 / 0.3);
-  --editor-gutter-border: oklch(0.275 0.045 260 / 0.4);
+  --editor-background: oklch(0.2 0.03 260 / 0.3);
+  --editor-header-background: oklch(0.2 0.03 260 / 0.4);
+  --editor-header-border: oklch(0.275 0.045 260 /);
+  --editor-line-number: oklch(0.6 0.02 260);
+  --editor-line-number-border: oklch(0.275 0.045 260 / 0.6);
+  --editor-line-hover-bg: oklch(0.25 0.03 260 / 0.4);
+  --editor-gutter-border: oklch(0.275 0.045 260 / 0.6);
   --editor-active-line-indicator: oklch(0.85 0.25 300);
   --editor-copy-success: oklch(0.7 0.3 120);
   --editor-scrollbar-thumb: oklch(0.3 0.05 260);
   --editor-scrollbar-track: oklch(0.15 0.02 260 / 0.4);
-  --editor-glass-effect: linear-gradient(
-          to bottom right,
-          oklch(0.2 0.03 260 / 0.8),
-          oklch(0.18 0.025 260 / 0.6)
-  );
+  --editor-glass-effect: linear-gradient(to bottom right, oklch(0.2 0.03 260 / 0.8), oklch(0.18 0.025 260 / 0.6));
+
+  --preview-background: oklch(0.95 0.28 280);
 }
 
-.dark {}
+.dark {
+}
 
 @layer base {
   * {
@@ -169,7 +167,9 @@
 }
 
 @layer base {
-  :root {}
+  :root {
+  }
 
-  .dark {}
+  .dark {
+  }
 }

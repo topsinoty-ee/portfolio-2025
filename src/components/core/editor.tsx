@@ -110,28 +110,30 @@ const codeTheme: PrismTheme = {
 };
 
 interface EditorProps {
-  initialCode?: string;
+  code?: string;
   language?: string;
   showLineNumbers?: boolean;
   className?: string;
   title?: string;
   readOnly?: boolean;
+  copyCode?: string;
 }
 
 export const Editor = ({
-  initialCode = "",
+  code: initialCode = "",
   language = "typescript",
   showLineNumbers = true,
   className = "",
   title,
   readOnly = true,
+  copyCode,
 }: EditorProps) => {
   const [code] = useState(initialCode.trim());
   const [hoveredLine, setHoveredLine] = useState<number | null>(null);
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(code).then(
+    navigator.clipboard.writeText(copyCode?.trim() ?? code).then(
       () => console.log("Copied to clipboard!"),
       () => console.log("Failed to copy to clipboard!")
     );
@@ -207,16 +209,20 @@ export const Editor = ({
                 <div
                   key={i}
                   {...getLineProps({ line })}
-                  className={cn("table-row", hoveredLine === i ? "bg-[--editor-line-highlight]" : "")}
+                  className={cn("table-row", hoveredLine === i ? "bg-editor-line-hover-bg group/line" : "")}
                   onMouseEnter={() => setHoveredLine(i)}
                   onMouseLeave={() => setHoveredLine(null)}
                 >
                   {showLineNumbers && (
-                    <span className="table-cell text-right pr-4 text-xs text-muted-foreground select-none">
+                    <span
+                      className={cn(
+                        "table-cell border-r border-transparent group-hover/line:border-r group-hover/line:border-ring text-right pr-4 text-xs text-muted-foreground group-hover/line:text-editor-line-number group-hover/line:bg-editor-line-hover-bg  select-none"
+                      )}
+                    >
                       {i + 1}
                     </span>
                   )}
-                  <span className="table-cell">
+                  <span className="table-cell group-hover/line:bg-editor-active-line-indicator/10">
                     {line.map((token, key) => (
                       <span key={key} {...getTokenProps({ token })} />
                     ))}

@@ -1,14 +1,13 @@
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import {
-  Tooltip,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
-} from "../ui/tooltip";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "../ui/tooltip";
+import { Flashlight, FlashlightOff } from "lucide-react";
+import { useFlashLightContext } from "../ui/flashlightContext";
 
-export const Navbar = () => (
+export const Navbar = () => {
+  const { toggle, enabled } = useFlashLightContext();
+  return (
   <header className="w-full flex items-baseline justify-between p-5 max-h-25 bg-card sticky z-50 top-0">
     {/* logo area */}
     <TooltipProvider delayDuration={3000}>
@@ -40,9 +39,11 @@ export const Navbar = () => (
       <a href="#link">Link</a>
     </nav>
 
-    {/* contact me */}
-    <Button className="hover:bg-secondary duration-300 hover:text-secondary-foreground">
-      Contact
+      {/* contact me and controls */}
+      <div className="flex gap-5">
+        <Button onClick={toggle} className={cn("hidden sm:block hover:bg-secondary")} variant={"ghost"}>
+          {enabled ? <Flashlight /> : <FlashlightOff />}
     </Button>
   </header>
 );
+};

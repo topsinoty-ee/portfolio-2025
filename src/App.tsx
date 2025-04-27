@@ -1,9 +1,11 @@
 import { useMouseHook } from "./components/hooks/mouse";
 import { Hero } from "./components/layout/hero";
 import { Navbar } from "./components/layout/navbar";
+import { MyProjects } from "./components/layout/pageSections/projects";
+import { useFlashlight } from "./components/hooks/flashlight";
 
 export default function App() {
-  const { gradientPosition, scrollPosition } = useMouseHook();
+  const { gradientPosition, scrollPosition } = useFlashlight();
   return (
     <>
       <div
@@ -16,6 +18,7 @@ export default function App() {
       <Navbar />
       <main className="pt-15 p-20 min-h-screen h-max">
         <Hero />
+        <MyProjects />
       </main>
     </>
   );

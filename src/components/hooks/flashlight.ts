@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
+import { useFlashLightContext } from "../ui/flashlightContext";
 
 interface MousePosition {
   x: number;
   y: number;
 }
 
-export function useMouseHook(smoothingFactor = 0.1) {
-  const [rawMousePosition, setRawMousePosition] = useState<MousePosition>({
-    x: 0,
-    y: 0,
-  });
-  const [smoothedMousePosition, setSmoothedMousePosition] =
-    useState<MousePosition>({ x: 0, y: 0 });
+export function useFlashlight(smoothingFactor = 0.1) {
+  const { enabled } = useFlashLightContext();
+
+  const [rawMousePosition, setRawMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
+  const [smoothedMousePosition, setSmoothedMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
   const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
@@ -51,9 +50,12 @@ export function useMouseHook(smoothingFactor = 0.1) {
   }, [rawMousePosition, smoothingFactor]);
 
   const gradientPosition = () => {
+    if (!enabled) return "";
+
     const x = (smoothedMousePosition.x / window.innerWidth) * 100;
     const y = (smoothedMousePosition.y / window.innerHeight) * 100;
-    return `radial-gradient(circle at ${x}% ${y}%, var(--secondary) -10%, var(--card) -7.5%, var(--primary) -12.5%, transparent 10%)`;
+
+    return `radial-gradient(circle at ${x}% ${y}%, var(--secondary) -50%, var(--card) -50%, var(--primary) -50%, transparent 15%)`;
   };
 
   return {

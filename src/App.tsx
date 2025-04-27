@@ -1,7 +1,5 @@
-import { Navbar } from "./components/ui/navbar";
+import { Navbar } from "./components/layout/navbar";
 
-export default function App(){
-  return(
-    <Navbar/>   
-  )
+export default function App() {
+  return <Navbar />;
 }

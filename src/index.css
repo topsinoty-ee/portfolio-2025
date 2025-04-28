@@ -10,7 +10,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   /* Theme mapping */
-  --color-*:initial;
+  --color-*: initial;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -31,12 +31,27 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Animation */
+  --animate-bounce-right: bounce-right 1s ease-in-out;
+  @keyframes bounce-right {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25%,
+    90% {
+      transform: translateX(0);
+    }
+    60% {
+      transform: translateX(0.25rem);
+    }
+  }
 }
 
 :root {
   --radius: 0.5rem;
 
-  /* Your upgraded colors using HSL now */
   --background: hsl(222 47% 11%);
   --foreground: hsl(210 40% 98%);
 
@@ -66,7 +81,6 @@
   --ring: hsl(149 100% 50%);
 }
 
-/* Optional dark mode (you can customize if needed) */
 .dark {
   --background: hsl(222 47% 5%);
   --foreground: hsl(210 40% 98%);
@@ -96,4 +110,17 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.button {
+  @apply relative overflow-hidden transition-all duration-300 ease-out;
+}
+
+.button::after {
+  content: "";
+  @apply absolute inset-0 transform scale-x-0 origin-left transition-transform duration-300 ease-out;
+}
+
+.button::after {
+  @apply scale-x-100;
 }

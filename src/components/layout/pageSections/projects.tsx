@@ -35,7 +35,7 @@ export const MyProjects = () => (
         }
       />
     </div>
-    <div className="w-full flex items-center justify-center md:justify-end">
+    <div className="w-full flex items-center justify-end">
       <Button variant={"outline"}>
         <SiGithub />
         <a href="https://github.com/topsinoty-ee?tab=repositories">My repos</a>

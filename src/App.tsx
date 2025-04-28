@@ -1,6 +1,5 @@
-import { Hero } from "./components/layout/pageSections/hero";
+import { AboutMe, Hero, MyProjects } from "./components/layout/pageSections";
 import { Navbar } from "./components/layout/navbar";
-import { MyProjects } from "./components/layout/pageSections/projects";
 import { useFlashlight } from "./components/hooks/flashlight";
 
 export default function App() {
@@ -11,13 +10,14 @@ export default function App() {
         className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
         style={{
           backgroundImage: gradientPosition(),
-          opacity: Math.max(0, 1 - scrollPosition / 500),
+          opacity: Math.max(0, 1 - scrollPosition / (window.visualViewport?.height || 500)),
         }}
       />
       <Navbar />
-      <main className="md:pt-15 pt-5 p-10 md:p-20 min-h-screen h-max flex flex-col md:gap-25 gap-10 scroll-smooth">
+      <main className="md:pt-15 pt-5 bg-background p-10 md:p-20 min-h-screen h-max flex flex-col md:gap-25 gap-10 scroll-smooth">
         <Hero />
         <MyProjects />
+        <AboutMe />
       </main>
     </>
   );

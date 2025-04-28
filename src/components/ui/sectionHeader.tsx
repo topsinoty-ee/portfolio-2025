@@ -16,7 +16,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ type = "primary", 
         {
           "text-primary": type === "primary",
           "text-secondary": type === "secondary",
-          "text-blue-500": type === "info",
+          "text-accent": type === "info",
           "text-4xl leading-snug md:text-6xl md:leading-relaxed": size === "lg",
           "text-2xl md:text-3xl": size === "md",
           "text-lg md:text-xl": size === "sm",

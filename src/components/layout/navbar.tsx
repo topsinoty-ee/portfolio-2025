@@ -8,7 +8,7 @@ import { useFlashLightContext } from "../ui/flashlightContext";
 export const Navbar = () => {
   const { toggle, enabled } = useFlashLightContext();
   return (
-    <header className="w-full flex items-baseline justify-between p-5 max-h-25 bg-card sticky z-50 top-0">
+    <header className="w-full flex items-baseline justify-between px-10 md:px-20 p-5 max-h-25 bg-card/80 drop-shadow-xs drop-shadow-border backdrop-blur-lg sticky z-50 top-0">
       {/* logo area */}
       <TooltipProvider delayDuration={3000}>
         <Tooltip>
@@ -29,7 +29,7 @@ export const Navbar = () => {
         )}
       >
         <a href="#myProjects">Projects</a>
-        <a href="#link">Link</a>
+        <a href="#aboutMe">Me</a>
         <a href="#link">Link</a>
         <a href="#link">Link</a>
       </nav>

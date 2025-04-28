@@ -10,7 +10,7 @@ export const Hero = () => (
         <TooltipProvider delayDuration={10000}>
           <Tooltip>
             <TooltipTrigger className="bg-secondary text-secondary-foreground md:text-lg" asChild>
-              <Badge>Frontend dev</Badge>
+              <Badge className="rounded-2xl px-4">Frontend dev</Badge>
             </TooltipTrigger>
             <TooltipContent
               arrowClassName="fill-card bg-card text-card-foreground"

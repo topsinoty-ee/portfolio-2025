@@ -38,7 +38,7 @@ export const ProjectCard = ({
 }: ProjectCardProps) => {
   return (
     <Card
-      className={`hover:drop-shadow-primary drop-shadow-sm **:transition-all **:duration-300 transition-all duration-300 group/projCard overflow-hidden ${className}`}
+      className={`hover:drop-shadow-primary hover:-translate-y-1 drop-shadow-sm **:transition-all **:duration-300 transition-all duration-300 group/projCard overflow-hidden ${className}`}
     >
       <CardHeader>
         <CardTitle className="text-lg font-bold flex items-baseline gap-2 group-hover/projCard:text-accent">

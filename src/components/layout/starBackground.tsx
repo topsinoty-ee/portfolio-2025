@@ -17,12 +17,7 @@ const hexToRgb = (hex: string) => {
   return `${r}, ${g}, ${b}`;
 };
 
-const generateStars = (
-  count: number,
-  starDensity: number,
-  starColors: string[],
-  size: number
-) => {
+const generateStars = (count: number, starDensity: number, starColors: string[], size: number) => {
   return Array.from({ length: Math.floor(count * starDensity) }, () => {
     const x = Math.random() * 100;
     const y = Math.random() * 100;
@@ -89,9 +84,7 @@ export const StarBackground = ({
   className = "",
 }: StarBackgroundProps) => {
   return (
-    <div
-      className={`relative h-screen w-full overflow-hidden -z-50 ${className}`}
-    >
+    <div className={`relative h-screen w-full overflow-hidden -z-50 ${className}`}>
       {/* Star Layers */}
       <StarLayer
         starCount={300}
@@ -124,9 +117,7 @@ export const StarBackground = ({
         extraScale={2}
       />
 
-      <div className="inset-0 flex items-center justify-center z-0">
-        {children}
-      </div>
+      <div className="inset-0 flex items-center justify-center z-0">{children}</div>
 
       <style>{`
         @keyframes fall {

@@ -124,3 +124,7 @@
 .button::after {
   @apply scale-x-100;
 }
+
+main > section {
+  @apply py-10;
+}

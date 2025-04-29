@@ -1,3 +1,4 @@
 export * from "./hero";
 export * from "./projects";
-export * from "./me.tsx";
+export * from "./me";
+export * from "./contact";

@@ -1,4 +1,4 @@
-import { AboutMe, Hero, MyProjects } from "./components/layout/pageSections";
+import { AboutMe, ContactMe, Hero, MyProjects } from "./components/layout/pageSections";
 import { Navbar } from "./components/layout/navbar";
 import { useFlashlight } from "./components/hooks/flashlight";
 
@@ -18,6 +18,7 @@ export default function App() {
         <Hero />
         <MyProjects />
         <AboutMe />
+        <ContactMe />
       </main>
     </>
   );

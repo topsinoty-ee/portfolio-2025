@@ -30,8 +30,7 @@ export const Navbar = () => {
       >
         <a href="#myProjects">Projects</a>
         <a href="#aboutMe">Me</a>
-        <a href="#link">Link</a>
-        <a href="#link">Link</a>
+        <a href="#contactMe">Contact</a>
       </nav>
 
       {/* contact me and controls */}
@@ -39,7 +38,9 @@ export const Navbar = () => {
         <Button onClick={toggle} className={cn("hidden md:block hover:bg-secondary")} variant={"ghost"}>
           {enabled ? <Flashlight /> : <FlashlightOff />}
         </Button>
-        <Button className="hover:bg-secondary duration-300 hover:text-secondary-foreground">Contact me</Button>
+        <Button className="hover:bg-secondary duration-300 hover:text-secondary-foreground" asChild>
+          <a href="#contactMe">Contact me</a>
+        </Button>
       </div>
     </header>
   );

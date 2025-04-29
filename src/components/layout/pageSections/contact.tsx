@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { isValidElement, JSX } from "react";
 import { FaLinkedin } from "react-icons/fa";
 import { ContactForm } from "../contactForm";
-import { getAccessToken } from "@/lib/spotify";
 
 interface Socials {
   [x: string]: [string, JSX.Element];
@@ -18,9 +17,6 @@ const socials: Socials = {
   ],
   linkedIn: ["https://www.linkedin.com/in/promise-temitope/", <FaLinkedin />],
 };
-
-console.log("test");
-console.log(getAccessToken());
 
 export const ContactMe = () => (
   <section id="contactMe" className="w-full flex items-start flex-col md:flex-row gap-15 md:gap-20 h-full min-h-max">

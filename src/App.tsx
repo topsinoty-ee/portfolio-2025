@@ -1,5 +1,6 @@
 import { AboutMe, ContactMe, Hero, MyProjects } from "./components/layout/pageSections";
 import { Navbar } from "./components/layout/navbar";
+import { Footer } from "./components/layout/footer";
 import { useFlashlight } from "./components/hooks/flashlight";
 
 export default function App() {
@@ -14,12 +15,13 @@ export default function App() {
         }}
       />
       <Navbar />
-      <main className="md:pt-15 pt-5 bg-background p-10 md:p-20 min-h-screen h-max flex flex-col md:gap-25 gap-10 scroll-smooth">
+      <main className="md:pt-15 pt-5 relative bg-background p-10 md:p-20 min-h-screen h-max flex flex-col md:gap-25 gap-10 scroll-smooth">
         <Hero />
         <MyProjects />
         <AboutMe />
         <ContactMe />
       </main>
+      <Footer />
     </>
   );
 }

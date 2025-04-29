@@ -12,7 +12,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ type = "primary", 
     <Tag
       {...props}
       className={cn(
-        "font-bold tracking-tight",
+        "font-bold tracking-tight inline-flex gap-2 flex-row flex-wrap",
         {
           "text-primary": type === "primary",
           "text-secondary": type === "secondary",

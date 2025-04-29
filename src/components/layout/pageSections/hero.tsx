@@ -4,8 +4,8 @@ import { SectionHeader } from "@/components/ui/sectionHeader";
 import { Button } from "@/components/ui/button";
 
 export const Hero = () => (
-  <section className="flex-col flex gap-20 md:flex-row w-full max-h-max">
-    <div className="w-full h-full min-h-96 order-2 md:order-1 flex flex-col gap-15 md:gap-10">
+  <section className="flex-col flex gap-0 md:gap-20 md:flex-row w-full max-h-max">
+    <div className="w-full h-full min-h-96 order-1 flex flex-col gap-15 md:gap-10">
       <div className="flex flex-col gap-2 md:gap-2.5">
         <TooltipProvider delayDuration={10000}>
           <Tooltip>
@@ -36,7 +36,7 @@ export const Hero = () => (
         </Button>
       </div>
     </div>
-    <div className="w-full h-full min-h-96 hidden md:flex md:order-2 bg-accent place-items-center place-content-center">
+    <div className="w-full h-full min-h-96 order-2 flex bg-accent place-items-center place-content-center">
       Terminal
     </div>
   </section>

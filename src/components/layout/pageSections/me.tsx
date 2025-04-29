@@ -32,7 +32,7 @@ export const AboutMe = () => (
         </span>
       </p>
       <Button asChild className="group">
-        <a href="/Promise_Temitope.pdf">
+        <a href="/promise_temitope.pdf" target="_blank" rel="noopener noreferrer">
           My CV <ExternalLink className="group-hover:animate-in" />
         </a>
       </Button>

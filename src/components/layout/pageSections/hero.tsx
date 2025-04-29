@@ -30,7 +30,9 @@ export const Hero = () => (
       </div>
 
       <div className="flex gap-2.5 md:gap-5 *:font-semibold">
-        <Button variant={"secondary"}>Contact me</Button>
+        <Button variant={"secondary"} asChild>
+          <a href="#contactMe">Contact me</a>
+        </Button>
         <Button variant={"link"} className="text-secondary" asChild>
           <a href="#myProjects">View my projects</a>
         </Button>

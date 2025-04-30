@@ -11,7 +11,7 @@ export default function App() {
         className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
         style={{
           backgroundImage: gradientPosition(),
-          opacity: Math.max(0, 1 - scrollPosition / (window.visualViewport?.height || 500)),
+          opacity: Math.max(0, 1 - scrollPosition / ((window.visualViewport?.height || 500) * 2)),
         }}
       />
       <Navbar />

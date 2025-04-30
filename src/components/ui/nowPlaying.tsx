@@ -14,7 +14,7 @@ export const NowPlaying = () => {
           href={track.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="underline underline-offset-2 text-accent"
+          className="underline underline-offset-2 text-accent hover:text-primary"
         >
           {track.artist["#text"]} — {track.name}
         </a>

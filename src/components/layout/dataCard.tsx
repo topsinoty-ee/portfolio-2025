@@ -45,7 +45,7 @@ export const DataCard = () => {
       </div>
 
       <div className="flex flex-col gap-2 grow text-sm">
-        <div className="bg-muted/10 p-4 rounded-lg flex flex-col gap-1">
+        <div className="bg-muted/10 p-4  flex flex-col gap-1">
           <span className="text-primary font-medium">🚧 Current Affairs</span>
           {data.currentAffairs.map((item, idx) => (
             <span key={idx}>- {item}</span>
@@ -53,14 +53,14 @@ export const DataCard = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div className="bg-muted/10 p-4 rounded-lg flex flex-col gap-1">
+          <div className="bg-muted/10 p-4 sm:rounded-l-lg flex flex-col gap-1">
             <span className="text-primary font-medium">🛠️ Stack Bias</span>
             {data.stackBias.map((item, idx) => (
               <span key={idx}>- {item}</span>
             ))}
           </div>
 
-          <div className="bg-muted/10 p-4 rounded-lg flex flex-col gap-1">
+          <div className="bg-muted/10 p-4 sm:rounded-r-lg flex flex-col gap-1">
             <span className="text-primary font-medium">📅 Timeline</span>
             <span>{data.timeline.availability}</span>
             <div className="mt-1 flex flex-col gap-0.5 *:[&_a:hover]:text-secondary">

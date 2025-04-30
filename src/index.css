@@ -125,6 +125,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  main {
+    background-image: url("../public/60-lines.png");
+    background-size: 100px 100px;
+  }
 }
 
 .button {

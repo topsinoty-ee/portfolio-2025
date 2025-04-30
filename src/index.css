@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -8,6 +8,8 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --font-jets: "Jetbrains Mono", monospace;
 
   /* Theme mapping */
   --color-*: initial;
@@ -34,6 +36,8 @@
 
   /* Animation */
   --animate-bounce-right: bounce-right 1s ease-in-out;
+  --animate-blink: blink infinite 1.5s ease-in-out;
+
   @keyframes bounce-right {
     0%,
     100% {
@@ -45,6 +49,17 @@
     }
     60% {
       transform: translateX(0.25rem);
+    }
+  }
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
     }
   }
 }

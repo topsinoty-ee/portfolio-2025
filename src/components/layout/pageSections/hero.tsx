@@ -2,9 +2,10 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/comp
 import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/ui/sectionHeader";
 import { Button } from "@/components/ui/button";
+import { DataCard } from "../dataCard";
 
 export const Hero = () => (
-  <section className="flex-col flex gap-0 md:gap-20 md:flex-row w-full max-h-max">
+  <section className="flex-col flex gap-0 md:gap-20 md:flex-row w-full h-full max-h-max">
     <div className="w-full h-full min-h-96 order-1 flex flex-col gap-15 md:gap-10">
       <div className="flex flex-col gap-2 md:gap-2.5">
         <TooltipProvider delayDuration={10000}>
@@ -38,8 +39,10 @@ export const Hero = () => (
         </Button>
       </div>
     </div>
-    <div className="w-full h-full min-h-96 order-2 flex bg-accent place-items-center place-content-center">
-      Terminal
+    <div className="w-full h-full z-31 p-1 min-h-96 order-2 flex drop-shadow-accent drop-shadow-sm bg-[0] shadow shadow-accent place-items-center place-content-center relative border-card rounded-2xl">
+      <div className="w-full max-h-full h-max md:h-96 bg-popover/99 rounded-2xl flex flex-col gap-5">
+        <DataCard />
+      </div>
     </div>
   </section>
 );

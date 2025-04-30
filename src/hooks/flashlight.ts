@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFlashLightContext } from "../ui/flashlightContext";
+import { useFlashLightContext } from "../components/ui/flashlightContext";
 
 interface MousePosition {
   x: number;

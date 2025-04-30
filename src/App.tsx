@@ -1,7 +1,7 @@
 import { AboutMe, ContactMe, Hero, MyProjects } from "./components/layout/pageSections";
 import { Navbar } from "./components/layout/navbar";
 import { Footer } from "./components/layout/footer";
-import { useFlashlight } from "./components/hooks/flashlight";
+import { useFlashlight } from "./hooks/flashlight";
 
 export default function App() {
   const { gradientPosition, scrollPosition } = useFlashlight();

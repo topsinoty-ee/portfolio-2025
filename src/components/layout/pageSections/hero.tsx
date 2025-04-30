@@ -40,7 +40,7 @@ export const Hero = () => (
       </div>
     </div>
     <div className="w-full h-full z-31 p-1 min-h-96 order-2 flex drop-shadow-accent drop-shadow-sm bg-[0] shadow shadow-accent place-items-center place-content-center relative border-card rounded-2xl">
-      <div className="w-full max-h-full h-max md:h-96 bg-popover/99 rounded-2xl flex flex-col gap-5">
+      <div className="w-full max-h-full h-max sm:h-96 bg-popover/99 rounded-2xl flex flex-col gap-5">
         <DataCard />
       </div>
     </div>

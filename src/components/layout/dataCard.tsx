@@ -1,5 +1,5 @@
-import { SiSpotify } from "@icons-pack/react-simple-icons";
 import { Button } from "../ui/button";
+import { NowPlaying } from "../ui/nowPlaying";
 
 const data = {
   currentAffairs: [
@@ -14,10 +14,6 @@ const data = {
       email: "oluwatobilobatemi05@gmail.com",
       phone: "(+372) 5445 0982",
     },
-  },
-  currentlyListening: {
-    enabled: true,
-    text: "Currently Listening",
   },
 };
 
@@ -79,12 +75,7 @@ export const DataCard = () => {
           </div>
         </div>
 
-        {data.currentlyListening.enabled && (
-          <div className="bg-muted/10 p-4 rounded-lg text-xs items-center gap-2.5 inline-flex">
-            <SiSpotify size={12} className="animate-[spin_1.85s_linear_infinite]" />
-            {data.currentlyListening.text}
-          </div>
-        )}
+        <NowPlaying />
       </div>
     </div>
   );

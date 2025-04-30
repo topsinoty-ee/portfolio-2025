@@ -20,7 +20,7 @@ export const Footer = () => (
     </div>
     <div className="md:flex items-end justify-end self-end hidden bg-black h-full w-1/2">
       <Badge variant="outline" className="text-lg drop-shadow-xs drop-shadow-accent bg-card px-4 py-2.5">
-        Just doing shit...
+        Find me online @topsinoty
       </Badge>
     </div>
   </footer>

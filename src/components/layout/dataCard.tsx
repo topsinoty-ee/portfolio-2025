@@ -3,7 +3,7 @@ import { NowPlaying } from "../ui/nowPlaying";
 
 const data = {
   currentAffairs: [
-    "Building Apiweave (fetch reinvented)",
+    "Building Wefy (standardization)",
     "Working on Flave (group project)",
     "Playing w/ SvelteKit & Java",
   ],
@@ -11,7 +11,7 @@ const data = {
   timeline: {
     availability: "Available: After Exams",
     contact: {
-      email: "oluwatobilobatemi05@gmail.com",
+      email: "oluwatobilobatemi05",
       phone: "(+372) 5445 0982",
     },
   },
@@ -23,7 +23,7 @@ export const DataCard = () => {
       `🧠 Promise - Frontend Dev + Tooling Architect\n` +
         `🌍 Tallinn, Estonia | Remote-ready\n\n` +
         `💻 React (TS) • Next.js 15 • TailwindCSS\n` +
-        `📫 ${data.timeline.contact.email} | github: @topsinoty-ee | topsinoty.vercel.app`
+        `📫 ${data.timeline.contact.email} | github: @topsinoty-ee | topsinoty.vercel.app`,
     );
   };
 
@@ -65,7 +65,7 @@ export const DataCard = () => {
             <span>{data.timeline.availability}</span>
             <div className="mt-1 flex flex-col gap-0.5 *:[&_a:hover]:text-secondary">
               <span className="text-primary font-medium">📫 Contact</span>
-              <a href={`mailto:${data.timeline.contact.email}`} className="text-accent">
+              <a href={`mailto:${data.timeline.contact.email}@gmail.com`} className="text-accent">
                 {data.timeline.contact.email}
               </a>
               <a href={`tel:${data.timeline.contact.phone.replace(/\s/g, "")}`} className="text-accent">

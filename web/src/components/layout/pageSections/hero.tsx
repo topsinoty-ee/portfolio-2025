@@ -1,4 +1,4 @@
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/ui/sectionHeader";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ export const Hero = () => (
               arrowClassName="fill-card bg-card text-card-foreground"
               className="bg-card text-card-foreground"
             >
-              That likes to dabble ;p
+              "I've been known to dabble"
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

@@ -1,5 +1,7 @@
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { NowPlaying } from "../ui/nowPlaying";
+import React from "react";
 
 const data = {
   currentAffairs: [
@@ -18,13 +20,21 @@ const data = {
 };
 
 export const DataCard = () => {
+  const [copiedToClipboard, setCopiedToClipboard] = React.useState(false);
   const copyProfileToClipboard = () => {
-    navigator.clipboard.writeText(
-      `🧠 Promise - Frontend Dev + Tooling Architect\n` +
-        `🌍 Tallinn, Estonia | Remote-ready\n\n` +
-        `💻 React (TS) • Next.js 15 • TailwindCSS\n` +
-        `📫 ${data.timeline.contact.email} | github: @topsinoty-ee | topsinoty.vercel.app`,
-    );
+    if (!copiedToClipboard) {
+      navigator.clipboard
+        .writeText(
+          `🧠 Promise - Frontend Dev + Tooling Architect\n` +
+            `🌍 Tallinn, Estonia | Remote-ready\n\n` +
+            `💻 React (TS) • Next.js 15 • TailwindCSS\n` +
+            `📫 ${data.timeline.contact.email} | github: @topsinoty-ee | https://topsinoty.vercel.app`,
+        )
+        .then(() => {
+          setCopiedToClipboard(true);
+          setTimeout(() => setCopiedToClipboard(false), 5000);
+        });
+    }
   };
 
   return (
@@ -38,13 +48,15 @@ export const DataCard = () => {
         <Button
           variant="ghost"
           onClick={copyProfileToClipboard}
-          className="hover:bg-muted/20 rounded-none rounded-tr-2xl text-xs px-4"
+          className={cn("hover:bg-muted/20 rounded-none rounded-tr-2xl text-xs px-4 transition-all duration-500", {
+            "bg-muted/20 cursor-not-allowed": copiedToClipboard,
+          })}
         >
-          📋 Copy My Details
+          {!copiedToClipboard ? "📋 Copy My Details" : "✔️ Copied!"}
         </Button>
       </div>
 
-      <div className="flex flex-col gap-2 grow text-sm">
+      <div className="flex flex-col gap-2 grow text-sm shadow-sm shadow-card">
         <div className="bg-muted/10 p-4  flex flex-col gap-1">
           <span className="text-primary font-medium">🚧 Current Affairs</span>
           {data.currentAffairs.map((item, idx) => (
@@ -52,15 +64,15 @@ export const DataCard = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div className="bg-muted/10 p-4 sm:rounded-l-lg flex flex-col gap-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+          <div className="bg-muted/10 p-4 sm:rounded-r-lg flex flex-col gap-1 shadow-sm shadow-card">
             <span className="text-primary font-medium">🛠️ Stack Bias</span>
             {data.stackBias.map((item, idx) => (
               <span key={idx}>- {item}</span>
             ))}
           </div>
 
-          <div className="bg-muted/10 p-4 sm:rounded-r-lg flex flex-col gap-1">
+          <div className="bg-muted/10 p-4 sm:rounded-l-lg flex flex-col gap-1 shadow-sm shadow-card">
             <span className="text-primary font-medium">📅 Timeline</span>
             <span>{data.timeline.availability}</span>
             <div className="mt-1 flex flex-col gap-0.5 *:[&_a:hover]:text-secondary">

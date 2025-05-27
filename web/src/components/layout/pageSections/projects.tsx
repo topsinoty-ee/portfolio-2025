@@ -42,7 +42,7 @@ export const MyProjects = () => (
 
     <div className="w-full flex items-center justify-center">
       <Button variant={"outline"} asChild>
-        <a href="https://github.com/topsinoty-ee?tab=repositories">
+        <a href="https://github.com/topsinoty-ee?tab=repositories" target={"_blank"} rel={"noopener noreferrer"}>
           <SiGithub />
           My repos
         </a>

@@ -20,25 +20,10 @@ indent_size = 2
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-# Markdown files
-[*.{md,markdown}]
-trim_trailing_whitespace = false
-
-# Shell scripts
-[*.{sh,bash,zsh}]
-end_of_line = lf
-indent_size = 2
-insert_final_newline = true
-trim_trailing_whitespace = true
-
 # XML files
 [*.{xml,svg,pom}]
 indent_size = 2
 insert_final_newline = true
-
-# Makefiles require tabs
-[Makefile]
-indent_style = tab
 
 # Documentation and config files
 [*.{md,txt,ini,cfg,conf}]

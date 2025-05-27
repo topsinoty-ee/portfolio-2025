@@ -1,24 +1,26 @@
 {
   "name": "server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "compile": "tsc",
-    "start": "npm run compile && node ./dist/index.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.11.0",
+  "private": true,
+  "version": "0.0.0",
   "type": "module",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "vite build",
+    "start": "node dist/server.js"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.6",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-resolvers": "^4.5.1",
+    "@types/node": "^22.15.21",
+    "tsx": "^4.19.4",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-string": "^1.2.3"
+  },
   "dependencies": {
     "fastify": "^5.3.3",
     "graphql": "^16.11.0",
     "mercurius": "^16.1.0"
-  },
-  "devDependencies": {
-    "@types/node": "^22.15.21",
-    "typescript": "^5.8.3"
   }
 }

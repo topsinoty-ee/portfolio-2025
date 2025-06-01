@@ -1,21 +1,21 @@
 type Project {
     id: String!
     title: String!
-    description: String!
+    content: String!
     link: String
     repo: String
 }
 
 input ProjectInput {
     title: String!
-    description: String!
+    content: String!
     link: String
     repo: String
 }
 
 input ProjectUpdateInput {
     title: String
-    description: String
+    content: String
     link: String
     repo: String
 }

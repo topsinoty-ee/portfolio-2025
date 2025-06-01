@@ -1,15 +1,34 @@
 import { buildApp } from "./app";
+import { connectToDatabase, disconnectFromDatabase } from "./db";
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 
 const start = async () => {
-  const app = await buildApp();
-
   try {
+    await connectToDatabase();
+
+    const app = await buildApp();
     await app.listen({ port: PORT });
-    console.log(`🚀 Server ready at ${app.server.address()}`);
+
+    const address = app.server.address();
+    if (typeof address === "string") {
+      console.log(`🚀 Server ready at ${address}`);
+    } else {
+      console.log(
+        `🚀 Server ready at http://[${address.address}]:${address.port}`,
+      );
+    }
+
+    const shutdown = async () => {
+      console.log("Shutting down server...");
+      await disconnectFromDatabase();
+      process.exit(0);
+    };
+
+    process.on("SIGINT", shutdown);
+    process.on("SIGTERM", shutdown);
   } catch (err) {
-    app.log.error(err);
+    console.error(err);
     process.exit(1);
   }
 };

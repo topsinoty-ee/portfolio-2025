@@ -1,3 +1,43 @@
+type Project {
+    id: String!
+    title: String!
+    description: String!
+    link: String
+    repo: String
+}
+
+input ProjectInput {
+    title: String!
+    description: String!
+    link: String
+    repo: String
+}
+
+input ProjectUpdateInput {
+    title: String
+    description: String
+    link: String
+    repo: String
+}
+
 type Query {
-    sayHello: String
+    project(title: String): Project
+    projects: [Project!]!
+}
+
+type Mutation {
+    addProject(data: ProjectInput!): ProjectMutationResult!
+    editProject(id: String!, data: ProjectUpdateInput!): ProjectMutationResult!
+    deleteProject(id: String!): DeleteResponse!
+}
+
+type ProjectMutationResult {
+    success: Boolean!
+    project: Project
+    error: String
+}
+
+type DeleteResponse {
+    success: Boolean!
+    reason: String
 }

@@ -6,7 +6,8 @@
     "codegen": "graphql-codegen --config codegen.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon --watch 'src/**/*.ts' --exec 'tsx' src/server.ts"
+    "prepare": "pnpm codegen",
+    "dev": "nodemon --watch src --ext ts --exec \"tsx src/server.ts\""
   },
   "keywords": [],
   "author": "",
@@ -18,13 +19,17 @@
     "@graphql-codegen/typescript": "^4.1.6",
     "@graphql-codegen/typescript-operations": "^4.6.1",
     "@graphql-codegen/typescript-resolvers": "^4.5.1",
+    "@types/jsonwebtoken": "^9.0.9",
     "nodemon": "^3.1.10",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "dotenv": "^16.5.0",
     "fastify": "^5.3.3",
     "graphql": "^16.11.0",
-    "mercurius": "^16.1.0"
+    "jsonwebtoken": "^9.0.2",
+    "mercurius": "^16.1.0",
+    "mongoose": "^8.15.1"
   }
 }

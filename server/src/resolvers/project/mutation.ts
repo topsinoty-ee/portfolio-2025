@@ -129,6 +129,17 @@ export const ProjectMutations: MutationResolvers = {
       }
 
       const existing = await Project.findOne({ _id: id }).lean();
+      if (!existing) {
+        throw new GraphQLError(
+          ERROR_MESSAGES.NOT_FOUND(`project with id: ${id}`),
+          {
+            extensions: {
+              code: ERROR_CODES.NOT_FOUND,
+              status: ERROR_STATUS_CODES.NOT_FOUND,
+            },
+          },
+        );
+      }
 
       const hasChanges = Object.keys(updateData).some(
         (key) =>

@@ -109,14 +109,14 @@ export const ProjectMutations: MutationResolvers = {
           });
         }
 
-        const existing = await Project.findOne({
+        const existingWithSameId = await Project.findOne({
           _id: { $ne: id },
           title,
         })
           .collation({ locale: "en", strength: 2 })
           .lean();
 
-        if (existing) {
+        if (existingWithSameId) {
           throw new GraphQLError(ERROR_MESSAGES.TITLE_EXISTS(title), {
             extensions: {
               code: ERROR_CODES.DUPLICATE_TITLE,
@@ -126,6 +126,22 @@ export const ProjectMutations: MutationResolvers = {
         }
 
         updateData.title = title;
+      }
+
+      const existing = await Project.findOne({ _id: id }).lean();
+
+      const hasChanges = Object.keys(updateData).some(
+        (key) =>
+          JSON.stringify(existing[key]) !== JSON.stringify(updateData[key]),
+      );
+
+      if (!hasChanges) {
+        throw new GraphQLError(ERROR_MESSAGES.NO_CHANGES_MADE, {
+          extensions: {
+            code: ERROR_CODES.NO_CHANGES_MADE,
+            status: ERROR_STATUS_CODES.NO_CHANGES_MADE,
+          },
+        });
       }
 
       const updatedProject = await Project.findByIdAndUpdate(
@@ -173,7 +189,6 @@ export const ProjectMutations: MutationResolvers = {
       });
     }
   },
-
   deleteProject: async (_, { id }) => {
     if (!Types.ObjectId.isValid(id)) {
       throw new GraphQLError(ERROR_MESSAGES.INVALID_ID, {

@@ -9,6 +9,7 @@ export const ERROR_CODES = {
   INTERNAL_ERROR: "INTERNAL_ERROR",
   SERVICE_UNAVAILABLE: "SERVICE_UNAVAILABLE",
   NOT_IMPLEMENTED: "NOT_IMPLEMENTED",
+  NO_CHANGES_MADE: "NO_CHANGES_MADE",
 } as const;
 
 export const ERROR_MESSAGES = {
@@ -20,19 +21,12 @@ export const ERROR_MESSAGES = {
   REQUIRED_FIELD: (field: string) => `${field} is required`,
   EMPTY_PAYLOAD: "Payload cannot be empty",
   INVALID_ID: "Invalid ID format",
-  TITLE_EXISTS: (title: string) => `Project title "${title}" already exists`, // Could also use ALREADY_EXISTS
+  TITLE_EXISTS: (title: string) => `Project title "${title}" already exists`,
   UNAUTHORIZED_ACCESS: "Unauthorized access",
   FORBIDDEN_ACTION: "Forbidden action",
   DATABASE_ERROR: "Database operation failed",
   NETWORK_ERROR: "Network communication failed",
-  /** @deprecated Use OPERATION_FAILED instead */
-  FAILED_ADD: "Failed to add project",
-  /** @deprecated Use OPERATION_FAILED instead */
-  FAILED_EDIT: "Failed to edit project",
-  /** @deprecated Use OPERATION_FAILED instead */
-  FAILED_DELETE: "Failed to delete project",
-  /** @deprecated Use NOT_FOUND instead */
-  PROJECT_NOT_FOUND: "Project not found",
+  NO_CHANGES_MADE: "No changes made",
 } as const;
 
 export const ERROR_STATUS_CODES: Record<keyof typeof ERROR_CODES, number> = {
@@ -46,4 +40,5 @@ export const ERROR_STATUS_CODES: Record<keyof typeof ERROR_CODES, number> = {
   INTERNAL_ERROR: 500,
   SERVICE_UNAVAILABLE: 503,
   NOT_IMPLEMENTED: 501,
+  NO_CHANGES_MADE: 422,
 } as const;

@@ -15,6 +15,7 @@ export const ProjectQueries: QueryResolvers = {
       const projects = await Project.find().lean();
       return projects.map(mapDocument);
     } catch (err) {
+      if (err instanceof GraphQLError) throw err;
       throw new GraphQLError(
         ERROR_MESSAGES.OPERATION_FAILED("fetch projects"),
         {

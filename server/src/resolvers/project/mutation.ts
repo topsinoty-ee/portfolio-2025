@@ -214,6 +214,7 @@ export const ProjectMutations: MutationResolvers = {
       }
       return true;
     } catch (err) {
+      if (err instanceof GraphQLError) throw err;
       throw new GraphQLError(
         ERROR_MESSAGES.OPERATION_FAILED("delete project"),
         {

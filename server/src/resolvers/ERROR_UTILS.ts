@@ -26,7 +26,7 @@ export const ERROR_MESSAGES = {
   FORBIDDEN_ACTION: "Forbidden action",
   DATABASE_ERROR: "Database operation failed",
   NETWORK_ERROR: "Network communication failed",
-  NO_CHANGES_MADE: "No changes made",
+  NO_CHANGES_MADE: "No changes made. Body might be identical to existing",
 } as const;
 
 export const ERROR_STATUS_CODES: Record<keyof typeof ERROR_CODES, number> = {

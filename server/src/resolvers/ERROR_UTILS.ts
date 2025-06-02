@@ -1,18 +1,49 @@
 export const ERROR_CODES = {
   BAD_REQUEST: "BAD_REQUEST",
-  DUPLICATE_TITLE: "DUPLICATE_TITLE",
-  VALIDATION_ERROR: "VALIDATION_ERROR",
+  UNAUTHORIZED: "UNAUTHORIZED",
+  FORBIDDEN: "FORBIDDEN",
   NOT_FOUND: "NOT_FOUND",
+  CONFLICT: "CONFLICT",
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  DUPLICATE_TITLE: "DUPLICATE_TITLE",
   INTERNAL_ERROR: "INTERNAL_ERROR",
+  SERVICE_UNAVAILABLE: "SERVICE_UNAVAILABLE",
+  NOT_IMPLEMENTED: "NOT_IMPLEMENTED",
 } as const;
 
 export const ERROR_MESSAGES = {
+  OPERATION_FAILED: (operation: string) => `Failed to ${operation}`,
+  NOT_FOUND: (resource: string) => `${resource} not found`,
+  ALREADY_EXISTS: (resource: string) => `${resource} already exists`,
+  INVALID_INPUT: (field?: string) =>
+    field ? `Invalid ${field}` : "Invalid input",
+  REQUIRED_FIELD: (field: string) => `${field} is required`,
   EMPTY_PAYLOAD: "Payload cannot be empty",
-  INVALID_ID: "Invalid project ID",
-  TITLE_REQUIRED: "Title is required",
-  TITLE_EXISTS: (title: string) => `Project title "${title}" already exists`,
-  PROJECT_NOT_FOUND: "Project not found",
+  INVALID_ID: "Invalid ID format",
+  TITLE_EXISTS: (title: string) => `Project title "${title}" already exists`, // Could also use ALREADY_EXISTS
+  UNAUTHORIZED_ACCESS: "Unauthorized access",
+  FORBIDDEN_ACTION: "Forbidden action",
+  DATABASE_ERROR: "Database operation failed",
+  NETWORK_ERROR: "Network communication failed",
+  /** @deprecated Use OPERATION_FAILED instead */
   FAILED_ADD: "Failed to add project",
+  /** @deprecated Use OPERATION_FAILED instead */
   FAILED_EDIT: "Failed to edit project",
+  /** @deprecated Use OPERATION_FAILED instead */
   FAILED_DELETE: "Failed to delete project",
+  /** @deprecated Use NOT_FOUND instead */
+  PROJECT_NOT_FOUND: "Project not found",
+} as const;
+
+export const ERROR_STATUS_CODES: Record<keyof typeof ERROR_CODES, number> = {
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  CONFLICT: 409,
+  VALIDATION_ERROR: 422,
+  DUPLICATE_TITLE: 409,
+  INTERNAL_ERROR: 500,
+  SERVICE_UNAVAILABLE: 503,
+  NOT_IMPLEMENTED: 501,
 } as const;

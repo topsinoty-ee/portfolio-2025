@@ -1,5 +1,5 @@
 type Project {
-    id: String!
+    id: ID!
     title: String!
     content: String!
     link: String
@@ -21,12 +21,12 @@ input ProjectUpdateInput {
 }
 
 type Query {
-    project(selector: String!): Project
+    project(id: ID!): Project
     projects: [Project!]!
 }
 
 type Mutation {
     addProject(payload: ProjectInput!): Project!
-    editProject(id: String!, payload: ProjectUpdateInput!): Project!
-    deleteProject(id: String!): Boolean!
+    editProject(id: ID!, payload: ProjectUpdateInput!): Project!
+    deleteProject(id: ID!): Boolean!
 }

@@ -1,3 +1,11 @@
+fragment ProjectData on Project {
+    id
+    title
+    content
+    link
+    repo
+}
+
 type Project {
     id: ID!
     title: String!

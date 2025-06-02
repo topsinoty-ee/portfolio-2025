@@ -9,7 +9,7 @@ export const buildApp = async () => {
 
   await app.register(async (instance) => {
     const schema = readFileSync(
-      new URL("./schema.gql", import.meta.url),
+      new URL("./schema.graphql", import.meta.url),
       "utf8",
     );
 

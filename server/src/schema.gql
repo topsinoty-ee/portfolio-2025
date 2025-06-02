@@ -21,23 +21,12 @@ input ProjectUpdateInput {
 }
 
 type Query {
-    project(title: String): Project
+    project(selector: String!): Project
     projects: [Project!]!
 }
 
 type Mutation {
-    addProject(data: ProjectInput!): ProjectMutationResult!
-    editProject(id: String!, data: ProjectUpdateInput!): ProjectMutationResult!
-    deleteProject(id: String!): DeleteResponse!
-}
-
-type ProjectMutationResult {
-    success: Boolean!
-    project: Project
-    error: String
-}
-
-type DeleteResponse {
-    success: Boolean!
-    reason: String
+    addProject(payload: ProjectInput!): Project!
+    editProject(id: String!, payload: ProjectUpdateInput!): Project!
+    deleteProject(id: String!): Boolean!
 }

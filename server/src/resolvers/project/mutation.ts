@@ -3,44 +3,59 @@ import { Project } from "@/schemas/project";
 import { GraphQLError } from "graphql";
 import { mapDocument } from "@/resolvers/utils";
 import { Error as MongooseError, Types } from "mongoose";
+import { ERROR_CODES, ERROR_MESSAGES } from "@/resolvers/ERROR_UTILS";
 
 export const ProjectMutations: MutationResolvers = {
   addProject: async (_, { payload }) => {
     if (!payload || Object.keys(payload).length === 0) {
-      throw new GraphQLError("Project payload is required", {
-        extensions: { code: "BAD_REQUEST", status: 400 },
+      throw new GraphQLError(ERROR_MESSAGES.EMPTY_PAYLOAD, {
+        extensions: { code: ERROR_CODES.BAD_REQUEST, status: 400 },
       });
     }
 
     try {
-      const existing = await Project.findOne({
-        title: payload.title,
-      }).collation({ locale: "en", strength: 2 });
-
-      if (existing) {
-        throw new GraphQLError("Title already exists", {
-          extensions: { code: "DUPLICATE_TITLE", status: 409 },
+      const title = payload.title?.trim();
+      if (!title) {
+        throw new GraphQLError(ERROR_MESSAGES.TITLE_REQUIRED, {
+          extensions: { code: ERROR_CODES.BAD_REQUEST, status: 400 },
         });
       }
 
-      const saved = await Project.create(payload);
-      return mapDocument(saved);
-    } catch (err) {
-      if (err instanceof GraphQLError) {
-        throw err;
+      const existing = await Project.findOne({ title })
+        .collation({
+          locale: "en",
+          strength: 2,
+        })
+        .lean();
+
+      if (existing) {
+        throw new GraphQLError(ERROR_MESSAGES.TITLE_EXISTS(title), {
+          extensions: { code: ERROR_CODES.DUPLICATE_TITLE, status: 409 },
+        });
       }
+
+      const saved = await Project.create({
+        ...payload,
+        title,
+      });
+
+      return mapDocument(saved.toObject());
+    } catch (err) {
+      if (err instanceof GraphQLError) throw err;
+
       if (err instanceof MongooseError.ValidationError) {
         throw new GraphQLError("Invalid project data", {
           extensions: {
-            code: "VALIDATION_ERROR",
+            code: ERROR_CODES.VALIDATION_ERROR,
             status: 400,
-            details: err.errors,
+            details: Object.values(err.errors).map((e) => e.message),
           },
         });
       }
-      throw new GraphQLError("Failed to add project", {
+
+      throw new GraphQLError(ERROR_MESSAGES.FAILED_ADD, {
         extensions: {
-          code: "INTERNAL_ERROR",
+          code: ERROR_CODES.INTERNAL_ERROR,
           status: 500,
           originalMessage: err instanceof Error ? err.message : String(err),
         },
@@ -50,60 +65,77 @@ export const ProjectMutations: MutationResolvers = {
 
   editProject: async (_, { id, payload }) => {
     if (!payload || Object.keys(payload).length === 0) {
-      throw new GraphQLError("New project payload is required", {
-        extensions: { code: "BAD_REQUEST", status: 400 },
+      throw new GraphQLError(ERROR_MESSAGES.EMPTY_PAYLOAD, {
+        extensions: { code: ERROR_CODES.BAD_REQUEST, status: 400 },
       });
     }
 
     if (!Types.ObjectId.isValid(id)) {
-      throw new GraphQLError("Invalid project ID", {
-        extensions: { code: "BAD_REQUEST", status: 400 },
+      throw new GraphQLError(ERROR_MESSAGES.INVALID_ID, {
+        extensions: { code: ERROR_CODES.BAD_REQUEST, status: 400 },
       });
     }
 
     try {
-      if (payload.title) {
-        const existing = await Project.findOne({
-          _id: { $ne: id },
-          title: payload.title,
-        }).collation({ locale: "en", strength: 2 });
+      const updateData = { ...payload };
 
-        if (existing) {
-          throw new GraphQLError("Title already exists", {
-            extensions: { code: "DUPLICATE_TITLE", status: 409 },
+      if (payload.title !== undefined) {
+        const title = payload.title.trim();
+        if (!title) {
+          throw new GraphQLError(ERROR_MESSAGES.TITLE_REQUIRED, {
+            extensions: { code: ERROR_CODES.BAD_REQUEST, status: 400 },
           });
         }
+
+        const existing = await Project.findOne({
+          _id: { $ne: id },
+          title,
+        })
+          .collation({ locale: "en", strength: 2 })
+          .lean();
+
+        if (existing) {
+          throw new GraphQLError(ERROR_MESSAGES.TITLE_EXISTS(title), {
+            extensions: { code: ERROR_CODES.DUPLICATE_TITLE, status: 409 },
+          });
+        }
+
+        updateData.title = title;
       }
 
-      const updatableProject = await Project.findByIdAndUpdate(
+      const updatedProject = await Project.findByIdAndUpdate(
         id,
-        { $set: payload },
-        { new: true },
+        { $set: updateData },
+        {
+          new: true,
+          runValidators: true,
+          lean: true,
+        },
       );
 
-      if (!updatableProject) {
-        throw new GraphQLError("Project not found", {
-          extensions: { code: "NOT_FOUND", status: 404 },
+      if (!updatedProject) {
+        throw new GraphQLError(ERROR_MESSAGES.PROJECT_NOT_FOUND, {
+          extensions: { code: ERROR_CODES.NOT_FOUND, status: 404 },
         });
       }
 
-      return mapDocument(updatableProject);
+      return mapDocument(updatedProject);
     } catch (err) {
-      if (err instanceof GraphQLError) {
-        throw err;
-      }
+      if (err instanceof GraphQLError) throw err;
+
       if (err instanceof MongooseError.ValidationError) {
         throw new GraphQLError("Invalid project data", {
           extensions: {
-            code: "VALIDATION_ERROR",
+            code: ERROR_CODES.VALIDATION_ERROR,
             status: 400,
-            details: err.errors,
+            details: Object.values(err.errors).map((e) => e.message),
           },
         });
       }
-      throw new GraphQLError("Failed to edit project", {
+
+      throw new GraphQLError(ERROR_MESSAGES.FAILED_EDIT, {
         extensions: {
-          code: "INTERNAL_ERROR",
+          code: ERROR_CODES.INTERNAL_ERROR,
           status: 500,
           originalMessage: err instanceof Error ? err.message : String(err),
         },
@@ -111,25 +143,25 @@ export const ProjectMutations: MutationResolvers = {
     }
   },
 
-  deleteProject: async (_, { id }: { id: string }) => {
+  deleteProject: async (_, { id }) => {
     if (!Types.ObjectId.isValid(id)) {
-      throw new GraphQLError("Invalid project ID", {
-        extensions: { code: "BAD_REQUEST", status: 400 },
+      throw new GraphQLError(ERROR_MESSAGES.INVALID_ID, {
+        extensions: { code: ERROR_CODES.BAD_REQUEST, status: 400 },
       });
     }
 
     try {
-      const deleted = await Project.findByIdAndDelete(id);
+      const deleted = await Project.findByIdAndDelete(id).lean();
       if (!deleted) {
-        throw new GraphQLError("Project not found", {
-          extensions: { code: "NOT_FOUND", status: 404 },
+        throw new GraphQLError(ERROR_MESSAGES.PROJECT_NOT_FOUND, {
+          extensions: { code: ERROR_CODES.NOT_FOUND, status: 404 },
         });
       }
       return true;
     } catch (err) {
-      throw new GraphQLError("Failed to delete project", {
+      throw new GraphQLError(ERROR_MESSAGES.FAILED_DELETE, {
         extensions: {
-          code: "INTERNAL_ERROR",
+          code: ERROR_CODES.INTERNAL_ERROR,
           status: 500,
           originalMessage: err instanceof Error ? err.message : String(err),
         },

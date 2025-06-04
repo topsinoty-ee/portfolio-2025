@@ -19,10 +19,9 @@ const projectSchema = new Schema(
           "Must be a valid GitHub repo URL (e.g., 'https://github.com/user/repo')",
       },
     },
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    for: {
+      type: String,
+      sparse: true,
       immutable: true,
     },
     collaborators: [

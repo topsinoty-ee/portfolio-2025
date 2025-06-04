@@ -24,6 +24,19 @@ const projectSchema = new Schema(
       sparse: true,
       immutable: true,
     },
+    skillsRequired: [
+      {
+        type: String,
+        required: true,
+        trim: true,
+        validate: {
+          validator: function (v: string) {
+            return v.length > 0 && v.length <= 64;
+          },
+          message: "Skill must be between 1 and 64 characters",
+        },
+      },
+    ],
     collaborators: [
       {
         type: String,
@@ -42,60 +55,46 @@ const projectSchema = new Schema(
     },
     isArchived: { type: Boolean, default: false },
     accessList: [{ type: Schema.Types.ObjectId, ref: "ProjectAccess" }],
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }],
   },
-  { versionKey: "version", timestamps: true },
+  { versionKey: "version", timestamps: true, minimize: true },
 );
 
 projectSchema.index({ title: 1, repo: 1 });
 projectSchema.index({ collaborators: 1, isArchived: 1 });
-projectSchema.index({ createdBy: 1 });
 projectSchema.index({ lastUpdatedBy: 1 });
+projectSchema.index({ skillsRequired: 1 });
 
 let originalCollaborators: string[] = [];
 
 projectSchema.pre("save", function () {
   if (!this.isNew) {
-    originalCollaborators = [...(this.collaborators || [])];
+    originalCollaborators = [...(this.collaborators ?? [])];
   }
 });
 
 projectSchema.post("save", async function (project) {
-  if (this.isNew || !this.isModified("collaborators")) return;
+  if (this.isNew || this.isModified("collaborators")) {
+    try {
+      const current = project.collaborators;
+      const previous = this.isNew ? [] : originalCollaborators;
 
-  const current = project.collaborators || [];
-  const previous = originalCollaborators || [];
+      await project.db
+        .model("User")
+        .updateMany(
+          { email: { $in: current } },
+          { $addToSet: { contributions: project._id } },
+        );
 
-  const added = current.filter((c) => !previous.includes(c));
-  const removed = previous.filter((c) => !current.includes(c));
-
-  try {
-    const promises = [];
-
-    if (added.length > 0) {
-      promises.push(
-        project.db
-          .model("User")
-          .updateMany(
-            { email: { $in: added } },
-            { $addToSet: { contributions: project._id } },
-          ),
-      );
+      await project.db
+        .model("User")
+        .updateMany(
+          { email: { $in: previous.filter((p) => !current.includes(p)) } },
+          { $pull: { contributions: project._id } },
+        );
+    } catch (error) {
+      console.error("Error syncing project collaborators:", error);
     }
-
-    if (removed.length > 0) {
-      promises.push(
-        project.db
-          .model("User")
-          .updateMany(
-            { email: { $in: removed } },
-            { $pull: { contributions: project._id } },
-          ),
-      );
-    }
-
-    await Promise.all(promises);
-  } catch (error) {
-    console.error("Error syncing collaborators:", error);
   }
 });
 

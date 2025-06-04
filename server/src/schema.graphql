@@ -1,9 +1,73 @@
+directive @auth(
+    requires: [Permission] = []
+    role: SessionType
+) on FIELD_DEFINITION | OBJECT
+
+enum SessionType {
+    ADMIN
+    USER
+    GUEST
+}
+
+enum Permission {
+    WRITE
+    DELETE
+    ADMIN
+}
+
+type User{
+    id: ID!
+    email: String! @auth(requires: [ADMIN])
+    githubId: String
+    avatar: String
+    role: ID!
+    isVerified: Boolean!
+    createdAt: String!
+    lastLogin: String @auth(requires: [ADMIN])
+}
+
+
 type Project {
     id: ID!
     title: String!
     content: String!
     link: String
-    repo: String
+    repo: String @auth(requires: [WRITE])
+    for: String
+    skillsRequired: [String!]!
+    collaborators: [String!]! @auth(requires: [WRITE])
+    lastUpdatedBy: ID
+    isArchived: Boolean!
+    comments: [ID!]!
+    accessList: [ID!]! @auth(requires: [ADMIN])
+    createdAt: String!
+    updatedAt: String!
+}
+
+type ProjectAccess {
+    id: ID!
+    user: User!
+    project: ID!
+    assignedBy: User!
+    permissions: PermissionOverrides!
+}
+
+type PermissionOverrides {
+    canRead: Boolean!
+    canWrite: Boolean!
+    canComment: Boolean!
+    canManageAccess: Boolean!
+    canDelete: Boolean!
+}
+
+type Comment {
+    id: ID!
+    project: ID!
+    author: User!
+    content: String!
+    createdAt: String!
+    parentComment: ID
+    isDeleted: Boolean! @auth(requires: [ADMIN])
 }
 
 input ProjectInput {
@@ -11,6 +75,9 @@ input ProjectInput {
     content: String!
     link: String
     repo: String
+    for: String
+    collaborators: [String!]
+    skillsRequired: [String!]
 }
 
 input ProjectUpdateInput {
@@ -18,15 +85,61 @@ input ProjectUpdateInput {
     content: String
     link: String
     repo: String
+    collaborators: [String!]
+    isArchived: Boolean
+    skillsRequired: [String!]
+}
+
+input CollaboratorInput {
+    projectId: ID!
+    email: String!
+}
+
+input PermissionOverridesInput {
+    canRead: Boolean
+    canWrite: Boolean
+    canComment: Boolean
+    canManageAccess: Boolean
+    canDelete: Boolean
+}
+
+input ProjectAccessInput {
+    userId: ID!
+    projectId: ID!
+    permissions: PermissionOverridesInput!
 }
 
 type Query {
-    project(id: ID!): Project
-    projects: [Project!]!
+    project(id: ID!): Project @auth
+    projects: [Project!]! @auth
+    myProjects: [Project!]! @auth
 }
 
 type Mutation {
-    addProject(payload: ProjectInput!): Project!
-    editProject(id: ID!, payload: ProjectUpdateInput!): Project!
-    deleteProject(id: ID!): Boolean!
+    # Project CRUD
+    createProject(payload: ProjectInput!): Project! @auth(requires: [WRITE])
+    updateProject(id: ID!, payload: ProjectUpdateInput!): Project! @auth(requires: [WRITE])
+    deleteProject(id: ID!): Boolean! @auth(requires: [ADMIN])
+    archiveProject(id: ID!): Project! @auth(requires: [WRITE])
+
+    # Collaborators
+    addCollaborator(input: CollaboratorInput!): Project! @auth(requires: [WRITE])
+    removeCollaborator(input: CollaboratorInput!): Project! @auth(requires: [WRITE])
+
+    # Access
+    grantAccess(input: ProjectAccessInput!): ProjectAccess! @auth(requires: [ADMIN])
+    revokeAccess(userId: ID!, projectId: ID!): Boolean! @auth(requires: [ADMIN])
+    updateAccess(input: ProjectAccessInput!): ProjectAccess! @auth(requires: [ADMIN])
+
+    # Comments
+    addComment(projectId: ID!, content: String!): Comment! @auth
+    deleteComment(id: ID!): Boolean! @auth(requires: [ADMIN, DELETE])
+
+    #Auth
+}
+
+type Subscription {
+    projectUpdated(projectId: ID!): Project! @auth
+    commentAdded(projectId: ID!): Comment! @auth
+    accessChanged(projectId: ID!): ProjectAccess! @auth(requires: [ADMIN])
 }

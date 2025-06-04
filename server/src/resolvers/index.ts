@@ -4,7 +4,7 @@ import { UserResolver } from "@/resolvers/user";
 
 const resolvers: Resolvers = {
   ...ProjectResolver,
-  ...UserResolver,
+  // ...UserResolver,
 };
 
 export { resolvers };

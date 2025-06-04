@@ -3,7 +3,7 @@ import { SectionHeader } from "../ui/sectionHeader";
 import { Socials } from "../ui/socials";
 
 export const Footer = () => (
-  <footer className="w-full gap-5 justify-between flex flex-col md:flex-row p-10 md:p-20 bg-card border-t-border border-t max-h-80 h-max drop-shadow-xs drop-shadow-border backdrop-blur-lg">
+  <footer className="relative w-full gap-5 justify-between flex flex-col md:flex-row p-10 md:p-20 bg-card border-t-border border-t max-h-80 h-max drop-shadow-xs drop-shadow-border backdrop-blur-lg z-50">
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">

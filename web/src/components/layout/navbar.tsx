@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "../ui/tooltip";
+import { Button, LoginButton } from "../ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { Flashlight, FlashlightOff } from "lucide-react";
 import { useFlashLightContext } from "../ui/flashlightContext";
 
@@ -25,7 +25,7 @@ export const Navbar = () => {
       {/* Convenience links */}
       <nav
         className={cn(
-          "hidden absolute top-0 left-1/2 -translate-x-1/2 translate-y-1/2 md:flex w-max *:text-xl *:p-2.5 *:transition-all *:duration-500 [&_a]:hover:text-accent"
+          "hidden absolute top-0 left-1/2 -translate-x-1/2 translate-y-1/2 md:flex w-max *:text-xl *:p-2.5 *:transition-all *:duration-500 [&_a]:hover:text-accent",
         )}
       >
         <a href="#myProjects">Projects</a>
@@ -38,9 +38,7 @@ export const Navbar = () => {
         <Button onClick={toggle} className={cn("hidden md:block hover:bg-secondary")} variant={"ghost"}>
           {enabled ? <Flashlight /> : <FlashlightOff />}
         </Button>
-        <Button className="hover:bg-secondary duration-300 hover:text-secondary-foreground" asChild>
-          <a href="#contactMe">Contact me</a>
-        </Button>
+        <LoginButton>Login</LoginButton>
       </div>
     </header>
   );

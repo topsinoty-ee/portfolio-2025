@@ -1,7 +1,9 @@
-import { AboutMe, ContactMe, Hero, MyProjects } from "./components/layout/pageSections";
 import { Navbar } from "./components/layout/navbar";
 import { Footer } from "./components/layout/footer";
 import { useFlashlight } from "./hooks/flashlight";
+import { IndexPage } from "@/pages/index.tsx";
+import { LoginPage } from "./pages/login.tsx";
+import { Switch, Route } from "wouter";
 
 export default function App() {
   const { gradientPosition, scrollPosition } = useFlashlight();
@@ -16,10 +18,10 @@ export default function App() {
       />
       <Navbar />
       <main className="md:pt-10 pt-5 relative bg-background p-10 md:p-20 min-h-screen h-max flex flex-col md:gap-25 gap-10 scroll-smooth">
-        <Hero />
-        <MyProjects />
-        <AboutMe />
-        <ContactMe />
+        <Switch>
+          <Route path="/" component={IndexPage} />
+          <Route path="/login" component={LoginPage} />
+        </Switch>
       </main>
       <Footer />
     </>

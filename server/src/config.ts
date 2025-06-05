@@ -2,7 +2,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const dbSecret = process.env.DB_SECRET;
-const gitPersonalAccessToken = process.env.GIT_PERSONAL_ACCESS_TOKEN;
-
-export { dbSecret, gitPersonalAccessToken };
+export default {
+  dbSecret: process.env.DB_SECRET,
+  gitPersonalAccessToken: process.env.GIT_PERSONAL_ACCESS_TOKEN,
+  auth0Domain: process.env.AUTH0_DOMAIN,
+  auth0Audience: process.env.AUTH0_AUDIENCE,
+}

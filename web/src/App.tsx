@@ -3,7 +3,8 @@ import { Footer } from "./components/layout/footer";
 import { useFlashlight } from "./hooks/flashlight";
 import { IndexPage } from "@/pages/index.tsx";
 import { LoginPage } from "./pages/login.tsx";
-import { Switch, Route } from "wouter";
+import { Route, Switch } from "wouter";
+import { ProjectsPage } from "@/pages/projects";
 
 export default function App() {
   const { gradientPosition, scrollPosition } = useFlashlight();
@@ -21,6 +22,7 @@ export default function App() {
         <Switch>
           <Route path="/" component={IndexPage} />
           <Route path="/login" component={LoginPage} />
+          <Route path="/projects" component={ProjectsPage} />
         </Switch>
       </main>
       <Footer />

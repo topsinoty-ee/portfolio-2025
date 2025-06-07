@@ -134,6 +134,17 @@ export const ProjectMutations: MutationResolvers = {
           },
         },);
       }
+      if (existing.isArchived) {
+        const isUnarchivingRequest = Object.keys(payload).length === 1 && payload.isArchived === false;
+        if (!isUnarchivingRequest) {
+          throw new GraphQLError(`${ERROR_MESSAGES.FORBIDDEN_ACTION}. Project is archived`, {
+            extensions: {
+              code: ERROR_CODES.FORBIDDEN,
+              status: ERROR_STATUS_CODES.FORBIDDEN,
+            }
+          });
+        }
+      }
       
       const hasChanges = Object.keys(updateData).some((key) => JSON.stringify(existing[key]) !== JSON.stringify(updateData[key]),);
       

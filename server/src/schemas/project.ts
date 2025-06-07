@@ -1,10 +1,10 @@
-import { model, Schema } from "mongoose";
+import {model, Schema} from "mongoose";
 
 const projectSchema = new Schema(
   {
-    title: { type: String, required: true, unique: true, trim: true },
-    content: { type: String, required: true },
-    link: { type: String, trim: true },
+    title: {type: String, required: true, unique: true, trim: true},
+    content: {type: String, required: true},
+    link: {type: String, trim: true},
     repo: {
       type: String,
       unique: true,
@@ -13,7 +13,7 @@ const projectSchema = new Schema(
       validate: {
         validator: (v: string) =>
           /^(https:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_-]{1,100}\/[a-zA-Z0-9_-]{1,100}(?:\.git)?\/?$/.test(
-            v,
+            v
           ),
         message:
           "Must be a valid GitHub repo URL (e.g., 'https://github.com/user/repo')",
@@ -53,17 +53,17 @@ const projectSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    isArchived: { type: Boolean, default: false },
-    accessList: [{ type: Schema.Types.ObjectId, ref: "ProjectAccess" }],
-    comments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }],
+    isArchived: {type: Boolean, default: false},
+    accessList: [{type: Schema.Types.ObjectId, ref: "ProjectAccess"}],
+    comments: [{type: Schema.Types.ObjectId, ref: "Comment", default: []}],
   },
-  { versionKey: "version", timestamps: true, minimize: true },
+  {versionKey: "version", timestamps: true, minimize: true}
 );
 
-projectSchema.index({ title: 1, repo: 1 });
-projectSchema.index({ collaborators: 1, isArchived: 1 });
-projectSchema.index({ lastUpdatedBy: 1 });
-projectSchema.index({ skillsRequired: 1 });
+projectSchema.index({title: 1, repo: 1});
+projectSchema.index({collaborators: 1, isArchived: 1});
+projectSchema.index({lastUpdatedBy: 1});
+projectSchema.index({skillsRequired: 1});
 
 let originalCollaborators: string[] = [];
 
@@ -78,36 +78,38 @@ projectSchema.post("save", async function (project) {
     try {
       const current = project.collaborators;
       const previous = this.isNew ? [] : originalCollaborators;
-
+      
       await project.db
         .model("User")
         .updateMany(
-          { email: { $in: current } },
-          { $addToSet: { contributions: project._id } },
+          {email: {$in: current}},
+          {$addToSet: {contributions: project._id}}
         );
-
+      
       await project.db
         .model("User")
         .updateMany(
-          { email: { $in: previous.filter((p) => !current.includes(p)) } },
-          { $pull: { contributions: project._id } },
+          {email: {$in: previous.filter((p) => !current.includes(p))}},
+          {$pull: {contributions: project._id}}
         );
     } catch (error) {
-      console.error("Error syncing project collaborators:", error);
+      if (error instanceof Error) throw error;
+      throw new Error("Error updating user contributions: " + error);
     }
   }
 });
 
-projectSchema.pre("deleteOne", { document: true }, async function () {
+projectSchema.pre("deleteOne", {document: true}, async function () {
   try {
     await this.db
       .model("User")
       .updateMany(
-        { contributions: this._id },
-        { $pull: { contributions: this._id } },
+        {contributions: this._id},
+        {$pull: {contributions: this._id}}
       );
   } catch (error) {
-    console.error("Error cleaning up project references:", error);
+    if (error instanceof Error) throw error;
+    throw new Error("Error cleaning up project references: " + error);
   }
 });
 

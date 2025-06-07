@@ -19,7 +19,6 @@ ij_editorconfig_spaces_around_assignment_operators = true
 
 [{*.ats,*.cts,*.mts,*.ts}]
 ij_continuation_indent_size = 2
-ij_smart_tabs = true
 ij_typescript_align_imports = false
 ij_typescript_align_multiline_array_initializer_expression = false
 ij_typescript_align_multiline_binary_operation = false

@@ -1,10 +1,8 @@
-import { Resolvers } from "../generated/graphql";
-import { ProjectResolver } from "@/resolvers/project";
-import { UserResolver } from "@/resolvers/user";
+import {Resolvers} from "@/generated/graphql";
+import {ProjectResolver} from "@/resolvers/project";
 
 const resolvers: Resolvers = {
   ...ProjectResolver,
-  // ...UserResolver,
 };
 
-export { resolvers };
+export {resolvers};

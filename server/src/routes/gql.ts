@@ -1,4 +1,4 @@
-import { FastifyPluginAsync } from "fastify";
+import {FastifyPluginAsync} from "fastify";
 
 export const graphqlRoutes: FastifyPluginAsync = async (app) => {
   app.get("/", async (request, reply) => {

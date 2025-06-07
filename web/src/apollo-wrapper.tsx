@@ -22,7 +22,6 @@ export const ApolloWrapper = ({ children }: { children: ReactNode }) => {
 
   const authLink = setContext((_, { headers, ...rest }) => {
     if (!bearer) return { headers, ...rest };
-    console.log(bearer);
     return {
       headers: {
         ...headers,

@@ -1,4 +1,4 @@
-import type { CodegenConfig } from "@graphql-codegen/cli";
+import type {CodegenConfig} from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   schema: "src/schema.graphql",
@@ -8,6 +8,8 @@ const config: CodegenConfig = {
       plugins: ["typescript", "typescript-resolvers"],
       config: {
         useIndexSignature: true,
+        contextType: "mercurius#MercuriusContext",
+        strict: true,
       },
     },
   },

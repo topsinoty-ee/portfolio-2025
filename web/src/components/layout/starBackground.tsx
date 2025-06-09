@@ -51,7 +51,7 @@ const StarLayer = ({
 }: StarLayerProps) => {
   const boxShadow = useMemo(
     () => generateStars(starCount, starDensity, starColors, size),
-    [starCount, starDensity, starColors, size]
+    [starCount, starDensity, starColors, size],
   );
 
   return (

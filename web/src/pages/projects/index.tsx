@@ -1,22 +1,11 @@
-import { gql, useQuery } from "@apollo/client";
-
-const getAllProjects = gql`
-  query getAllProjects {
-    projects {
-      id
-      title
-      content
-      comments
-      repo
-      isArchived
-      skillsRequired
-      accessList
-    }
-  }
-`;
+import { useGetAllProjectsQuery } from "@/generated/graphql";
 
 export const ProjectsPage = () => {
-  const { loading, error, data } = useQuery(getAllProjects);
+  const { loading, error, data } = useGetAllProjectsQuery({
+    variables: {},
+    fetchPolicy: "network-only",
+    nextFetchPolicy: "cache-first",
+  });
 
   console.log(data);
 

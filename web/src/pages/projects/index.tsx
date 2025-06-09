@@ -1,7 +1,7 @@
-import { useGetAllProjectsQuery } from "@/generated/graphql";
+import { Project, useGetProjectsQuery } from "@/generated/graphql";
 
 export const ProjectsPage = () => {
-  const { loading, error, data } = useGetAllProjectsQuery({
+  const { loading, error, data } = useGetProjectsQuery({
     variables: {},
     fetchPolicy: "network-only",
     nextFetchPolicy: "cache-first",
@@ -15,7 +15,7 @@ export const ProjectsPage = () => {
       {error && <p>Error :(</p>}
       {data && <p>{data.projects.length}</p>}
       {data &&
-        data.projects.map((project: any) => (
+        data.projects.map((project: Partial<Project>) => (
           <p key={project.id}>
             {project.title} {project.content}
           </p>

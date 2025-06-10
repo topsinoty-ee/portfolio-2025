@@ -5,8 +5,10 @@ import { SiGithub } from "@icons-pack/react-simple-icons";
 import { ArrowRight, Users } from "lucide-react";
 import { ReactNode } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import { Link } from "wouter";
+import { Project } from "@/generated/graphql";
 
-interface BaseProjectCardProps {
+interface BaseProjectCardProps extends Project {
   title: string;
   description?: string;
   tags: string[];
@@ -37,61 +39,63 @@ export const ProjectCard = ({
   ...props
 }: ProjectCardProps) => {
   return (
-    <Card
-      className={`hover:drop-shadow-primary hover:-translate-y-1 drop-shadow-sm **:transition-all **:duration-300 transition-all duration-300 group/projCard overflow-hidden ${className}`}
-    >
-      <CardHeader>
-        <CardTitle className="text-lg font-bold flex items-baseline gap-2 group-hover/projCard:text-accent">
-          {title}
-          {!solo && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant={"outline"}>
-                    <Users size={16} />
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {("groupDescription" in props && props.groupDescription) || "Team Project"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+    <Link to={`/projects/${props.id}`}>
+      <Card
+        className={`hover:drop-shadow-primary hover:-translate-y-1 drop-shadow-sm **:transition-all **:duration-300 transition-all duration-300 group/projCard overflow-hidden ${className}`}
+      >
+        <CardHeader>
+          <CardTitle className="text-lg font-bold flex items-baseline gap-2 group-hover/projCard:text-accent">
+            {title}
+            {!solo && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge variant={"outline"}>
+                      <Users size={16} />
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {("groupDescription" in props && props.groupDescription) || "Team Project"}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </CardTitle>
+          <CardDescription className="line-clamp-2">{description}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </CardContent>
+        <CardFooter className="flex gap-2.5">
+          {link && (
+            <Button variant="ghost" size="md" className="button-hover" asChild>
+              <a href={link} target="_blank" rel="noopener noreferrer">
+                <span className="mr-1">View Project</span>
+                <ArrowRight size={16} className="delay-500 duration-100 group-hover/projCard:animate-bounce-right" />
+              </a>
+            </Button>
           )}
-        </CardTitle>
-        <CardDescription className="line-clamp-2">{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-      <CardFooter className="flex gap-2.5">
-        {link && (
           <Button variant="ghost" size="md" className="button-hover" asChild>
-            <a href={link} target="_blank" rel="noopener noreferrer">
-              <span className="mr-1">View Project</span>
-              <ArrowRight size={16} className="delay-500 duration-100 group-hover/projCard:animate-bounce-right" />
+            <a href={repo} target="_blank" rel="noopener noreferrer">
+              <span className="mr-1">View repo</span>
+              {!link ? (
+                <ArrowRight
+                  size={16}
+                  className={`transition-transform duration-300 group-hover/projCard:transform group-hover/projCard:translate-x-1`}
+                />
+              ) : (
+                <SiGithub />
+              )}
             </a>
           </Button>
-        )}
-        <Button variant="ghost" size="md" className="button-hover" asChild>
-          <a href={repo} target="_blank" rel="noopener noreferrer">
-            <span className="mr-1">View repo</span>
-            {!link ? (
-              <ArrowRight
-                size={16}
-                className={`transition-transform duration-300 group-hover/projCard:transform group-hover/projCard:translate-x-1`}
-              />
-            ) : (
-              <SiGithub />
-            )}
-          </a>
-        </Button>
-      </CardFooter>
-    </Card>
+        </CardFooter>
+      </Card>
+    </Link>
   );
 };

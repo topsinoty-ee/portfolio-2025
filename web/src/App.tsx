@@ -5,6 +5,8 @@ import { IndexPage } from "@/pages/index.tsx";
 import { LoginPage } from "./pages/login.tsx";
 import { Route, Switch } from "wouter";
 import { ProjectsPage } from "@/pages/projects";
+import { ProjectPage } from "@/pages/projects/detail.tsx";
+import { EditProjectPage } from "@/pages/projects/edit.tsx";
 
 export default function App() {
   const { gradientPosition, scrollPosition } = useFlashlight();
@@ -23,6 +25,8 @@ export default function App() {
           <Route path="/" component={IndexPage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/projects" component={ProjectsPage} />
+          <Route path="/projects/:id" component={ProjectPage} />
+          <Route path="/projects/edit/:id" component={EditProjectPage} />
         </Switch>
       </main>
       <Footer />

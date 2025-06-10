@@ -25,7 +25,7 @@ const projectAccessSchema = new Schema(
       canDelete: { type: Boolean },
     },
   },
-  { timestamps: true },
+  { timestamps: true ,
 );
 
 projectAccessSchema.index({ user: 1, project: 1 }, { unique: true });

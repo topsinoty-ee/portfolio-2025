@@ -23,7 +23,7 @@ const commentSchema = new Schema(
     },
     isDeleted: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  { timestamps: true ,
 );
 
 export const Comment = model("Comment", commentSchema);

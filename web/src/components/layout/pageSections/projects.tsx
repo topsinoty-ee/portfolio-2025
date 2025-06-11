@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { ProjectCard } from "@/components/ui/projectCard";
 import { SectionHeader } from "@/components/ui/sectionHeader";
 import { SiGithub } from "@icons-pack/react-simple-icons";
-import { useGetProjectsSuspenseQuery } from "@/generated/graphql";
+import { useGetFeaturedProjectsSuspenseQuery } from "@/generated/graphql";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { TriangleAlert } from "lucide-react";
 
 const ProjectsList = () => {
-  const { data, error } = useGetProjectsSuspenseQuery();
+  const { data, error } = useGetFeaturedProjectsSuspenseQuery();
 
   if (error) {
     return (

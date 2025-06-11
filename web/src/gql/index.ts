@@ -43,6 +43,33 @@ export const GET_PROJECTS = gql`
   ${PROJECT_FRAGMENT}
 `;
 
+export const GET_FEATURED_PROJECTS = gql`
+  query GetFeaturedProjects {
+    projects(filterBy: { isFeatured: true }) {
+      ...ProjectFields
+    }
+  }
+  ${PROJECT_FRAGMENT}
+`;
+
+export const GET_ARCHIVED_PROJECTS = gql`
+  query GetArchivedProjects {
+    projects(filterBy: { isArchived: true }) {
+      ...ProjectFields
+    }
+  }
+  ${PROJECT_FRAGMENT}
+`;
+
+export const SEARCH_PROJECTS = gql`
+  query SearchProjects($filterBy: ProjectFilter!) {
+    projects(filterBy: $filterBy) {
+      ...ProjectFields
+    }
+  }
+  ${PROJECT_FRAGMENT}
+`;
+
 export const GET_MY_PROJECTS = gql`
   query GetMyProjects {
     myProjects {

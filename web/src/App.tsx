@@ -3,13 +3,20 @@ import { Footer } from "./components/layout/footer";
 import { useFlashlight } from "./hooks/flashlight";
 import { IndexPage } from "@/pages/index.tsx";
 import { LoginPage } from "./pages/login.tsx";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import { ProjectsPage } from "@/pages/projects";
 import { ProjectPage } from "@/pages/projects/detail.tsx";
 import { EditProjectPage } from "@/pages/projects/edit.tsx";
+import { useEffect } from "react";
 
 export default function App() {
   const { gradientPosition, scrollPosition } = useFlashlight();
+
+  const [location] = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location]);
+
   return (
     <>
       <div

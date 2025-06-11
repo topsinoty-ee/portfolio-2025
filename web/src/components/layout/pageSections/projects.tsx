@@ -65,7 +65,7 @@ export const MyProjects = () => {
           fallback={
             <div className="grid grid-cols-1 md:grid-cols-2 w-full h-full gap-10">
               {[...Array(4)].map((_, i) => (
-                <Skeleton key={i} className="h-[300px] w-full rounded-lg" />
+                <Skeleton key={i} className="h-[200px] w-full rounded-lg bg-muted" />
               ))}
             </div>
           }

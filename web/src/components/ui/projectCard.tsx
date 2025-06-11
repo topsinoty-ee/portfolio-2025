@@ -1,12 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import { ArrowRight, Users } from "lucide-react";
 import { ReactNode } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 import { Link } from "wouter";
 import { Project } from "@/generated/graphql";
+import clsx from "clsx";
 
 interface BaseProjectCardProps extends Project {
   title: string;
@@ -33,64 +34,72 @@ export const ProjectCard = ({
   description,
   tags,
   link,
-  className,
   repo,
   solo = false,
+  // groupDescription,
+  className,
   ...props
 }: ProjectCardProps) => {
   return (
-    <Link to={`/projects/${props.id}`}>
+    <Link to={`/projects/${props.id}`} className={"z-32"}>
       <Card
-        className={`hover:drop-shadow-primary hover:-translate-y-1 drop-shadow-sm **:transition-all **:duration-300 transition-all duration-300 group/projCard overflow-hidden ${className}`}
+        className={clsx(
+          "bg-card/90 group/projCard transition-all duration-300 transform hover:shadow-primary hover:-translate-y-1 overflow-hidden",
+          className,
+        )}
       >
-        <CardHeader>
-          <CardTitle className="text-lg font-bold flex items-baseline gap-2 group-hover/projCard:text-accent">
-            {title}
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center justify-between gap-2 text-lg font-semibold group-hover/projCard:text-accent">
+            <span className="line-clamp-1">{title}</span>
             {!solo && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Badge variant={"outline"}>
+                    <Badge variant="outline" className="shrink-0">
                       <Users size={16} />
                     </Badge>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    {("groupDescription" in props && props.groupDescription) || "Team Project"}
-                  </TooltipContent>
+                  {/*<TooltipContent>{groupDescription || "Team Project"}</TooltipContent>*/}
                 </Tooltip>
               </TooltipProvider>
             )}
           </CardTitle>
-          <CardDescription className="line-clamp-2">{description}</CardDescription>
+          {description && <CardDescription className="line-clamp-2">{description}</CardDescription>}
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
+
+        <CardContent className="pt-0 pb-4">
+          <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
             {tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs">
+              <Badge key={tag} variant="secondary" className="text-xs rounded-md px-2 py-0.5">
                 {tag}
               </Badge>
             ))}
           </div>
         </CardContent>
-        <CardFooter className="flex gap-2.5">
+
+        <CardFooter className="flex justify-start gap-2.5 flex-wrap pt-0">
           {link && (
-            <Button variant="ghost" size="md" className="button-hover" asChild>
+            <Button variant="ghost" size="default" asChild className="group/link-btn text-sm px-3">
               <a href={link} target="_blank" rel="noopener noreferrer">
                 <span className="mr-1">View Project</span>
-                <ArrowRight size={16} className="delay-500 duration-100 group-hover/projCard:animate-bounce-right" />
+                <ArrowRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover/link-btn:translate-x-1"
+                />
               </a>
             </Button>
           )}
-          <Button variant="ghost" size="md" className="button-hover" asChild>
+
+          <Button variant="ghost" size="default" asChild className="group/repo-btn text-sm px-3">
             <a href={repo} target="_blank" rel="noopener noreferrer">
-              <span className="mr-1">View repo</span>
+              <span className="mr-1">View Repo</span>
               {!link ? (
                 <ArrowRight
                   size={16}
-                  className={`transition-transform duration-300 group-hover/projCard:transform group-hover/projCard:translate-x-1`}
+                  className="transition-transform duration-300 group-hover/repo-btn:translate-x-1"
                 />
               ) : (
-                <SiGithub />
+                <SiGithub size={16} />
               )}
             </a>
           </Button>

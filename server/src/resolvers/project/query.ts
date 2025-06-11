@@ -3,7 +3,11 @@ import { Project } from "@/schemas/project";
 import { mapDocument } from "@/resolvers/utils";
 import { FilterQuery, InferSchemaType, Types } from "mongoose";
 import { GraphQLError } from "graphql";
-import { ERROR_CODES, ERROR_MESSAGES, ERROR_STATUS_CODES } from "@/resolvers/ERROR_UTILS";
+import {
+  ERROR_CODES,
+  ERROR_MESSAGES,
+  ERROR_STATUS_CODES,
+} from "@/resolvers/ERROR_UTILS";
 
 type ProjectDocument = InferSchemaType<typeof Project.schema>;
 
@@ -18,11 +22,11 @@ export const ProjectQueries: QueryResolvers = {
         isFeatured,
         for: forWhom,
         collaborators,
-        titl,
+        title,
       } = input;
 
       const mongoFilter: FilterQuery<ProjectDocument> = {
-        isArchived: isArchived ?? fals,
+        isArchived: isArchived ?? false,
       };
 
       if (skillsRequired?.length) {
@@ -44,7 +48,7 @@ export const ProjectQueries: QueryResolvers = {
       if (title) {
         const cleaned = title.replace(/[-_\s]+/g, ".*");
         mongoFilter.title = {
-          $regex: new RegExp(cleaned, "i",
+          $regex: new RegExp(cleaned, "i"),
         };
       }
 
@@ -71,7 +75,7 @@ export const ProjectQueries: QueryResolvers = {
   project: async (_, { id }) => {
     if (!id || !Types.ObjectId.isValid(id)) {
       throw new GraphQLError(ERROR_MESSAGES.INVALID_ID, {
-        extensions: { code: ERROR_CODES.BAD_REQUEST, status: 400 }
+        extensions: { code: ERROR_CODES.BAD_REQUEST, status: 400 },
       });
     }
 

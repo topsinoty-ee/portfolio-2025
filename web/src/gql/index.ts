@@ -61,6 +61,14 @@ export const GET_ARCHIVED_PROJECTS = gql`
   ${PROJECT_FRAGMENT}
 `;
 
+export const GET_SKILLS = gql`
+  query GetSkills {
+    projects {
+      skillsRequired
+    }
+  }
+`;
+
 export const SEARCH_PROJECTS = gql`
   query SearchProjects($filterBy: ProjectFilter!) {
     projects(filterBy: $filterBy) {

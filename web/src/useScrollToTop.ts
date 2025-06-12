@@ -24,8 +24,6 @@ export function useScrollToTop(options: ScrollToOptions = { behavior: "smooth" }
       const cleanCurrentPath = currentPath.split("?")[0];
       const cleanPrevPath = previousPath.current.split("#")[0].split("?")[0];
 
-      console.log(`useScrollToTop triggered for path: ${cleanCurrentPath}, hash: ${hash}`);
-
       if (isInitialMount.current) {
         isInitialMount.current = false;
         previousPath.current = currentHref;
@@ -38,29 +36,19 @@ export function useScrollToTop(options: ScrollToOptions = { behavior: "smooth" }
       }
 
       if (hash) {
-        console.log(`Scrolling to element with ID: ${hash}`);
-
         const scrollToElement = () => {
           const element = document.getElementById(hash);
           if (!element) {
-            console.warn(`Element with ID "${hash}" not found for scrollToTop.`);
             return false;
           }
 
           const rect = element.getBoundingClientRect();
-          console.log(`Element rect:`, rect, `Window scrollY: ${window.scrollY}`);
-
-          if (rect.height === 0 && rect.width === 0) {
-            console.log(`Element not fully rendered yet, retrying...`);
+          if (rect.top === 0 && rect.left === 0 && rect.height === 0 && rect.width === 0) {
             return false;
           }
 
-          const offset = 80;
+          const offset = 64;
           const top = rect.top + window.scrollY - offset;
-
-          console.log(
-            `Calculated scroll position: ${top} (rect.top: ${rect.top}, scrollY: ${window.scrollY}, offset: ${offset})`,
-          );
 
           try {
             window.scrollTo({ top, left: 0, ...optionsRef.current });

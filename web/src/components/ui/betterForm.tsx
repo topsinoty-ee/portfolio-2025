@@ -41,7 +41,7 @@ interface SmartSelectFieldConfig {
 
 interface FormFieldConfig<FieldValuesType extends FieldValues> {
   name: FieldPath<FieldValuesType>;
-  label: string;
+  label?: string;
   placeholder?: string;
   type?: FormFieldType;
   description?: string;
@@ -151,10 +151,13 @@ export function BetterForm<FieldValuesType extends FieldValues>({
                 name={fieldConfig.name}
                 render={({ field }) => (
                   <FormItem className={fieldConfig.className}>
-                    <FormLabel>
-                      {fieldConfig.label}
-                      {fieldConfig.required && <span className="text-destructive ml-1">*</span>}
-                    </FormLabel>
+                    {fieldConfig.label && (
+                      <FormLabel>
+                        {fieldConfig.label}
+                        {fieldConfig.required && <span className="text-destructive ml-1">*</span>}
+                      </FormLabel>
+                    )}
+
                     <FormControl>{renderField(fieldConfig, field)}</FormControl>
                     {fieldConfig.description && <FormDescription>{fieldConfig.description}</FormDescription>}
                     <FormMessage />

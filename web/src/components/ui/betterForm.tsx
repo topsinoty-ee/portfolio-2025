@@ -2,86 +2,87 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import {
-  ControllerRenderProps,
-  DefaultValues,
-  FieldPath,
-  FieldPathValue,
-  FieldValues,
-  useForm,
-  UseFormReturn,
-} from "react-hook-form";
+import { ControllerRenderProps, DefaultValues, FieldPath, FieldValues, useForm, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Check, ChevronsUpDown, Plus, X } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-type FieldType = "text" | "email" | "tel" | "textarea" | "autosuggest" | "select" | "multiselect" | "tags";
+type FormFieldType = "text" | "email" | "tel" | "textarea" | "select" | "multiselect";
 
-interface Option {
+export interface SelectOption {
   value: string;
   label: string;
+  [key: string]: unknown;
 }
 
-interface AsyncSuggestionsConfig {
-  fetchFn: (query: string) => Promise<Option[]>;
-  debounce?: number;
-  minChars?: number;
+interface AsyncSelectConfig {
+  fetchFn: (query: string) => Promise<SelectOption[]>;
+  debounceMs?: number;
+  minSearchChars?: number;
+  initialOptions?: SelectOption[];
 }
 
-interface FieldConfig<T extends FieldValues> {
-  name: FieldPath<T>;
+interface SmartSelectFieldConfig {
+  mode: "static" | "async";
+  staticOptions?: SelectOption[];
+  asyncConfig?: AsyncSelectConfig;
+  maxSelections?: number;
+  allowCustomValues?: boolean;
+  searchVisibilityThreshold?: number;
+}
+
+interface FormFieldConfig<TFieldValues extends FieldValues> {
+  name: FieldPath<TFieldValues>;
   label: string;
   placeholder?: string;
-  type?: FieldType;
+  type?: FormFieldType;
   description?: string;
   disabled?: boolean;
   required?: boolean;
-  options?: Option[] | AsyncSuggestionsConfig;
   className?: string;
-  maxTags?: number;
+  selectConfig?: SmartSelectFieldConfig;
 }
 
-interface BetterFormContext<T extends FieldValues> extends UseFormReturn<T> {
+interface BetterFormCallbackUtils<TFieldValues extends FieldValues> extends UseFormReturn<TFieldValues> {
   toast: typeof toast;
 }
 
-interface BetterFormProps<T extends FieldValues> {
-  formSchema: z.ZodSchema<T>;
-  fields: readonly FieldConfig<T>[];
-  onSubmit: (values: T) => Promise<void>;
-  defaultValues?: DefaultValues<T>;
-  submitText?: string;
+interface BetterFormProps<TFieldValues extends FieldValues> {
+  formSchema: z.ZodSchema<TFieldValues>;
+  fields: readonly FormFieldConfig<TFieldValues>[];
+  onSubmit: (values: TFieldValues) => Promise<void>;
+  defaultValues?: DefaultValues<TFieldValues>;
+  submitButtonText?: string;
   className?: string;
-  onSuccess?: (data: T, context: BetterFormContext<T>) => void;
-  onError?: (error: unknown, context: BetterFormContext<T>) => void;
+  onSuccess?: (data: TFieldValues, utils: BetterFormCallbackUtils<TFieldValues>) => void;
+  onError?: (error: unknown, utils: BetterFormCallbackUtils<TFieldValues>) => void;
 }
 
-export function BetterForm<T extends FieldValues>({
+export function BetterForm<TFieldValues extends FieldValues>({
   formSchema,
   fields,
   onSubmit,
   defaultValues,
-  submitText = "Submit",
+  submitButtonText = "Submit",
   className = "",
   onSuccess,
   onError,
-}: BetterFormProps<T>) {
-  const form = useForm<T>({
+}: BetterFormProps<TFieldValues>) {
+  const form = useForm<TFieldValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
     mode: "onChange",
   });
 
-  const context: BetterFormContext<T> = useMemo(
+  const callbackUtils: BetterFormCallbackUtils<TFieldValues> = useMemo(
     () => ({
       ...form,
       toast,
@@ -90,24 +91,24 @@ export function BetterForm<T extends FieldValues>({
   );
 
   const handleSubmit = useCallback(
-    async (data: T) => {
+    async (data: TFieldValues) => {
       try {
-        toast.promise(onSubmit(data), {
-          loading: "Submitting form...",
-          success: "Form submitted successfully!",
-          error: "Failed to submit form. Please try again.",
-        });
-        onSuccess?.(data, context);
+        await onSubmit(data);
+        toast.success("Form submitted successfully!");
+        onSuccess?.(data, callbackUtils);
       } catch (error) {
-        onError?.(error, context);
-        throw error;
+        toast.error("Failed to submit form. Please try again.");
+        onError?.(error, callbackUtils);
       }
     },
-    [onSubmit, onSuccess, onError, context],
+    [onSubmit, onSuccess, onError, callbackUtils],
   );
 
   const renderField = useCallback(
-    (fieldConfig: FieldConfig<T>, field: ControllerRenderProps<T, FieldPath<T>>) => {
+    (
+      fieldConfig: FormFieldConfig<TFieldValues>,
+      field: ControllerRenderProps<TFieldValues, FieldPath<TFieldValues>>,
+    ) => {
       const commonProps = {
         disabled: fieldConfig.disabled || false,
         placeholder: fieldConfig.placeholder,
@@ -116,33 +117,21 @@ export function BetterForm<T extends FieldValues>({
       switch (fieldConfig.type) {
         case "textarea":
           return <Textarea {...commonProps} {...field} />;
-
-        case "autosuggest":
-          return <AsyncAutosuggest fieldConfig={fieldConfig} field={field} form={form} />;
-
         case "select":
-          return (
-            <Select value={field.value} onValueChange={field.onChange} disabled={commonProps.disabled}>
-              <SelectTrigger>
-                <SelectValue placeholder={commonProps.placeholder || "Select an option..."} />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.isArray(fieldConfig.options) &&
-                  fieldConfig.options.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          );
-
         case "multiselect":
-          return <MultiSelectInput fieldConfig={fieldConfig} field={field} form={form} />;
-
-        case "tags":
-          return <TagsInput fieldConfig={fieldConfig} field={field} form={form} />;
-
+          if (!fieldConfig.selectConfig) {
+            console.warn(`SmartSelect field "${String(fieldConfig.name)}" is missing selectConfig.`);
+            return <Input type="text" {...commonProps} {...field} />;
+          }
+          return (
+            <SmartSelect
+              fieldType={fieldConfig.type}
+              fieldConfig={fieldConfig}
+              field={field}
+              formInstance={form}
+              {...commonProps}
+            />
+          );
         default:
           return <Input type={fieldConfig.type || "text"} {...commonProps} {...field} />;
       }
@@ -174,9 +163,8 @@ export function BetterForm<T extends FieldValues>({
               />
             ))}
           </div>
-
           <Button type="submit" className="w-full" disabled={form.formState.isSubmitting || !form.formState.isValid}>
-            {form.formState.isSubmitting ? "Submitting..." : submitText}
+            {form.formState.isSubmitting ? "Submitting..." : submitButtonText}
           </Button>
         </form>
       </Form>
@@ -185,257 +173,313 @@ export function BetterForm<T extends FieldValues>({
   );
 }
 
-interface AsyncAutosuggestProps<T extends FieldValues> {
-  fieldConfig: FieldConfig<T>;
-  field: ControllerRenderProps<T, FieldPath<T>>;
-  form: UseFormReturn<T>;
+interface SmartSelectProps<TFieldValues extends FieldValues> {
+  fieldType: "select" | "multiselect";
+  fieldConfig: FormFieldConfig<TFieldValues>;
+  field: ControllerRenderProps<TFieldValues, FieldPath<TFieldValues>>;
+  formInstance: UseFormReturn<TFieldValues>;
+  disabled?: boolean;
+  placeholder?: string;
 }
 
-function AsyncAutosuggest<T extends FieldValues>({ fieldConfig, field, form }: AsyncAutosuggestProps<T>) {
+function SmartSelect<TFieldValues extends FieldValues>({
+  fieldType,
+  fieldConfig,
+  field,
+  disabled = false,
+  placeholder,
+}: SmartSelectProps<TFieldValues>) {
   const [open, setOpen] = useState(false);
-  const [suggestions, setSuggestions] = useState<Option[]>([]);
-  const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<SelectOption[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [cachedResults, setCachedResults] = useState<Map<string, SelectOption[]>>(new Map());
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const asyncConfig = useMemo(() => {
-    if (!fieldConfig.options || Array.isArray(fieldConfig.options)) return null;
-    return fieldConfig.options;
-  }, [fieldConfig.options]);
+  const selectSettings = fieldConfig.selectConfig;
+
+  if (!selectSettings) {
+    console.error(`SmartSelect field "${String(fieldConfig.name)}" is missing selectConfig.`);
+    return null;
+  }
+
+  const {
+    mode = "static",
+    staticOptions = [],
+    asyncConfig,
+    maxSelections,
+    allowCustomValues = false,
+    searchVisibilityThreshold = 5,
+  } = selectSettings;
+
+  const isMultiselect = fieldType === "multiselect";
+
+  const currentFieldValue = field.value;
+  const selectedValues: string[] = isMultiselect ? (Array.isArray(currentFieldValue) ? currentFieldValue : []) : [];
+  const singleValue: string = isMultiselect ? "" : typeof currentFieldValue === "string" ? currentFieldValue : "";
+
+  const shouldShowSearch = useMemo(() => {
+    if (mode === "async") return true;
+    if (isMultiselect) return true;
+    return staticOptions.length > searchVisibilityThreshold;
+  }, [mode, isMultiselect, staticOptions.length, searchVisibilityThreshold]);
 
   useEffect(() => {
-    if (!asyncConfig) return;
+    if (mode === "static") {
+      setSuggestions(staticOptions);
+      return;
+    }
 
-    const { fetchFn, debounce = 300, minChars = 1 } = asyncConfig;
-
-    if (searchQuery.length < minChars) {
+    if (!asyncConfig || !asyncConfig.fetchFn) {
+      console.warn(`SmartSelect in async mode but no fetchFn provided for field "${String(fieldConfig.name)}".`);
       setSuggestions([]);
       return;
     }
 
+    const { fetchFn, debounceMs = 300, minSearchChars = 1, initialOptions = [] } = asyncConfig;
+
+    if (!searchQuery) {
+      setSuggestions(initialOptions);
+      return;
+    }
+
+    if (searchQuery.length < minSearchChars) {
+      setSuggestions([]);
+      return;
+    }
+
+    if (cachedResults.has(searchQuery)) {
+      setSuggestions(cachedResults.get(searchQuery)!);
+      return;
+    }
+
     const timer = setTimeout(async () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      abortControllerRef.current = new AbortController();
       setLoading(true);
+
       try {
         const results = await fetchFn(searchQuery);
-        setSuggestions(results);
+        if (!abortControllerRef.current.signal.aborted) {
+          setSuggestions(results);
+          setCachedResults((prev) => new Map(prev).set(searchQuery, results));
+        }
       } catch (error) {
-        console.error("Failed to fetch suggestions:", error);
-        setSuggestions([]);
+        if (!abortControllerRef.current.signal.aborted) {
+          console.error("Failed to fetch suggestions:", error);
+          setSuggestions([]);
+        }
       } finally {
-        setLoading(false);
+        if (!abortControllerRef.current.signal.aborted) {
+          setLoading(false);
+        }
       }
-    }, debounce);
+    }, debounceMs);
 
-    return () => clearTimeout(timer);
-  }, [searchQuery, asyncConfig]);
+    return () => {
+      clearTimeout(timer);
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [searchQuery, mode, asyncConfig, staticOptions, cachedResults, fieldConfig.name]);
 
-  const currentValue = field.value as string;
-  const allOptions = Array.isArray(fieldConfig.options) ? fieldConfig.options : suggestions;
-  const displayValue = currentValue
-    ? allOptions.find((option) => option.value === currentValue)?.label
-    : fieldConfig.placeholder || "Select an option...";
+  const allAvailableOptions = useMemo(() => {
+    const combined = new Map<string, SelectOption>();
+    staticOptions.forEach((option) => combined.set(option.value, option));
+    suggestions.forEach((option) => combined.set(option.value, option));
+    return Array.from(combined.values());
+  }, [staticOptions, suggestions]);
+
+  const filteredDisplayOptions = useMemo(() => {
+    if (mode === "async") return suggestions;
+    if (!shouldShowSearch || !searchQuery) return staticOptions;
+
+    return staticOptions.filter(
+      (option) =>
+        option.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        option.value.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [mode, suggestions, staticOptions, shouldShowSearch, searchQuery]);
 
   const handleSelect = useCallback(
     (value: string) => {
-      form.setValue(fieldConfig.name, value as FieldPathValue<T, FieldPath<T>>);
-      setOpen(false);
+      if (isMultiselect) {
+        const currentSelected = new Set(selectedValues);
+        let newValues: string[];
+
+        if (currentSelected.has(value)) {
+          currentSelected.delete(value);
+          newValues = Array.from(currentSelected);
+        } else {
+          if (maxSelections && selectedValues.length >= maxSelections) {
+            toast.warning(`Maximum ${maxSelections} selections allowed.`);
+            return;
+          }
+          currentSelected.add(value);
+          newValues = Array.from(currentSelected);
+        }
+        field.onChange(newValues);
+      } else {
+        field.onChange(value);
+        setOpen(false);
+      }
     },
-    [form, fieldConfig.name],
+    [isMultiselect, selectedValues, maxSelections, field],
   );
 
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          className={cn("w-full justify-between", !currentValue && "text-muted-foreground")}
-          disabled={fieldConfig.disabled}
-        >
-          {displayValue}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-full p-0">
-        <Command shouldFilter={false}>
-          <CommandInput placeholder="Search..." value={searchQuery} onValueChange={setSearchQuery} />
-          <CommandList>
-            {loading ? (
-              <CommandEmpty>Loading...</CommandEmpty>
-            ) : suggestions.length === 0 ? (
-              <CommandEmpty>No options found</CommandEmpty>
-            ) : (
-              <CommandGroup>
-                <ScrollArea className="max-h-48">
-                  {suggestions.map((option) => (
-                    <CommandItem value={option.value} key={option.value} onSelect={() => handleSelect(option.value)}>
-                      <Check
-                        className={cn("mr-2 h-4 w-4", option.value === currentValue ? "opacity-100" : "opacity-0")}
-                      />
-                      {option.label}
-                    </CommandItem>
-                  ))}
-                </ScrollArea>
-              </CommandGroup>
-            )}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
-  );
-}
+  const handleAddCustomValue = useCallback(
+    (customValue: string) => {
+      if (!allowCustomValues || !isMultiselect) return;
 
-interface MultiSelectInputProps<T extends FieldValues> {
-  fieldConfig: FieldConfig<T>;
-  field: ControllerRenderProps<T, FieldPath<T>>;
-  form: UseFormReturn<T>;
-}
-
-function MultiSelectInput<T extends FieldValues>({ fieldConfig, field, form }: MultiSelectInputProps<T>) {
-  const [open, setOpen] = useState(false);
-  const selectedValues = (field.value as string[]) || [];
-  const options = Array.isArray(fieldConfig.options) ? fieldConfig.options : [];
-
-  const toggleValue = useCallback(
-    (value: string) => {
-      const newValues = selectedValues.includes(value)
-        ? selectedValues.filter((v) => v !== value)
-        : [...selectedValues, value];
-      form.setValue(fieldConfig.name, newValues as FieldPathValue<T, FieldPath<T>>);
-    },
-    [selectedValues, form, fieldConfig.name],
-  );
-
-  const removeValue = useCallback(
-    (value: string) => {
-      const newValues = selectedValues.filter((v) => v !== value);
-      form.setValue(fieldConfig.name, newValues as FieldPathValue<T, FieldPath<T>>);
-    },
-    [selectedValues, form, fieldConfig.name],
-  );
-
-  return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap gap-1 min-h-[40px] border rounded-md p-2">
-        {selectedValues.length > 0 ? (
-          selectedValues.map((value) => {
-            const option = options.find((opt) => opt.value === value);
-            return (
-              <Badge key={value} variant="secondary" className="flex items-center gap-1">
-                {option?.label || value}
-                <X className="h-3 w-3 cursor-pointer hover:text-destructive" onClick={() => removeValue(value)} />
-              </Badge>
-            );
-          })
-        ) : (
-          <span className="text-muted-foreground text-sm">{fieldConfig.placeholder || "Select options..."}</span>
-        )}
-      </div>
-
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="w-full justify-start" disabled={fieldConfig.disabled}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add options
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-full p-0">
-          <Command>
-            <CommandInput placeholder="Search options..." />
-            <CommandEmpty>No options found.</CommandEmpty>
-            <CommandGroup>
-              <ScrollArea className="max-h-48">
-                {options.map((option) => (
-                  <CommandItem key={option.value} onSelect={() => toggleValue(option.value)}>
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        selectedValues.includes(option.value) ? "opacity-100" : "opacity-0",
-                      )}
-                    />
-                    {option.label}
-                  </CommandItem>
-                ))}
-              </ScrollArea>
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    </div>
-  );
-}
-
-interface TagsInputProps<T extends FieldValues> {
-  fieldConfig: FieldConfig<T>;
-  field: ControllerRenderProps<T, FieldPath<T>>;
-  form: UseFormReturn<T>;
-}
-
-function TagsInput<T extends FieldValues>({ fieldConfig, field, form }: TagsInputProps<T>) {
-  const [inputValue, setInputValue] = useState("");
-  const tags = (field.value as string[]) || [];
-
-  const addTag = useCallback(
-    (tag: string) => {
-      const trimmedTag = tag.trim();
-      if (!trimmedTag || tags.includes(trimmedTag)) return;
-
-      if (fieldConfig.maxTags && tags.length >= fieldConfig.maxTags) {
-        toast.warning(`Maximum ${fieldConfig.maxTags} tags allowed`);
+      const trimmedValue = customValue.trim();
+      if (!trimmedValue || selectedValues.includes(trimmedValue)) {
+        setSearchQuery("");
         return;
       }
 
-      form.setValue(fieldConfig.name, [...tags, trimmedTag] as FieldPathValue<T, FieldPath<T>>);
-      setInputValue("");
+      if (maxSelections && selectedValues.length >= maxSelections) {
+        toast.warning(`Maximum ${maxSelections} selections allowed.`);
+        return;
+      }
+
+      const newValues = [...selectedValues, trimmedValue];
+      field.onChange(newValues);
+      setSearchQuery("");
     },
-    [tags, fieldConfig.maxTags, fieldConfig.name, form],
+    [allowCustomValues, isMultiselect, selectedValues, maxSelections, field],
   );
 
-  const removeTag = useCallback(
-    (tagToRemove: string) => {
-      form.setValue(fieldConfig.name, tags.filter((tag) => tag !== tagToRemove) as FieldPathValue<T, FieldPath<T>>);
+  const handleRemove = useCallback(
+    (valueToRemove: string) => {
+      if (!isMultiselect) return;
+
+      const newValues = selectedValues.filter((v) => v !== valueToRemove);
+      field.onChange(newValues);
     },
-    [tags, form, fieldConfig.name],
+    [isMultiselect, selectedValues, field],
   );
+
+  const getDisplayValue = useCallback(() => {
+    if (isMultiselect) return "";
+
+    const option = allAvailableOptions.find((opt) => opt.value === singleValue);
+    return option?.label || placeholder || "Select...";
+  }, [isMultiselect, allAvailableOptions, singleValue, placeholder]);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && allowCustomValues && isMultiselect && searchQuery.trim()) {
         e.preventDefault();
-        addTag(inputValue);
+        handleAddCustomValue(searchQuery);
+      }
+      if (e.key === "Backspace" && isMultiselect && !searchQuery && selectedValues.length > 0) {
+        e.preventDefault();
+        handleRemove(selectedValues[selectedValues.length - 1]);
       }
     },
-    [inputValue, addTag],
+    [allowCustomValues, isMultiselect, searchQuery, selectedValues, handleAddCustomValue, handleRemove],
   );
-
-  const isDisabled = fieldConfig.disabled || (fieldConfig.maxTags ? tags.length >= fieldConfig.maxTags : false);
-  const canAddTag = inputValue.trim() && !isDisabled;
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap gap-1 min-h-[40px] border rounded-md p-2">
-        {tags.length > 0 ? (
-          tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-              {tag}
-              <X className="h-3 w-3 cursor-pointer hover:text-destructive" onClick={() => removeTag(tag)} />
-            </Badge>
-          ))
-        ) : (
-          <span className="text-muted-foreground text-sm">{fieldConfig.placeholder || "Add tags..."}</span>
-        )}
-      </div>
-      <div className="flex gap-2">
-        <Input
-          placeholder={fieldConfig.placeholder || "Add tag..."}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={isDisabled}
-        />
-        <Button type="button" variant="outline" size="default" onClick={() => addTag(inputValue)} disabled={!canAddTag}>
-          <Plus className="h-4 w-4" />
-        </Button>
-      </div>
+      {isMultiselect && (
+        <div className="flex flex-wrap gap-1 min-h-[40px] border rounded-md p-2">
+          {selectedValues.length > 0 ? (
+            <>
+              {selectedValues.slice(0, selectedValues.length > 3 ? 2 : selectedValues.length).map((value) => {
+                const option = allAvailableOptions.find((opt) => opt.value === value);
+                return (
+                  <Badge key={value} variant="secondary" className="flex items-center gap-1">
+                    {option?.label || value} {}
+                    <X className="h-3 w-3 cursor-pointer hover:text-destructive" onClick={() => handleRemove(value)} />
+                  </Badge>
+                );
+              })}
+              {selectedValues.length > 3 && <Badge variant="outline">+{selectedValues.length - 2} more</Badge>}
+            </>
+          ) : (
+            <span className="text-muted-foreground text-sm">{placeholder || "Add items..."}</span>
+          )}
+        </div>
+      )}
+
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            className={cn("w-full justify-between", !singleValue && !isMultiselect && "text-muted-foreground")}
+            disabled={disabled}
+          >
+            {isMultiselect ? (
+              <span className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                {selectedValues.length > 0 ? `Add more (${selectedValues.length} selected)` : "Add items"}
+              </span>
+            ) : (
+              getDisplayValue()
+            )}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0" align="start">
+          <Command shouldFilter={false}>
+            {shouldShowSearch && (
+              <CommandInput
+                placeholder="Search..."
+                value={searchQuery}
+                onValueChange={setSearchQuery}
+                onKeyDown={handleKeyDown}
+              />
+            )}
+            <CommandList>
+              {loading ? (
+                <CommandEmpty>
+                  <div className="flex items-center justify-center gap-2 py-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Loading...</span>
+                  </div>
+                </CommandEmpty>
+              ) : filteredDisplayOptions.length === 0 &&
+                (!allowCustomValues || !isMultiselect || !searchQuery.trim()) ? (
+                <CommandEmpty>No options found.</CommandEmpty>
+              ) : (
+                <CommandGroup>
+                  <ScrollArea className="max-h-48">
+                    {filteredDisplayOptions.map((option) => (
+                      <CommandItem key={option.value} value={option.value} onSelect={() => handleSelect(option.value)}>
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            (isMultiselect ? selectedValues.includes(option.value) : singleValue === option.value)
+                              ? "opacity-100"
+                              : "opacity-0",
+                          )}
+                        />
+                        {option.label}
+                      </CommandItem>
+                    ))}
+                    {}
+                    {allowCustomValues &&
+                      isMultiselect &&
+                      searchQuery.trim() &&
+                      !allAvailableOptions.some((opt) => opt.value === searchQuery.trim()) && (
+                        <CommandItem onSelect={() => handleAddCustomValue(searchQuery)}>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add "{searchQuery}"
+                        </CommandItem>
+                      )}
+                  </ScrollArea>
+                </CommandGroup>
+              )}
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }

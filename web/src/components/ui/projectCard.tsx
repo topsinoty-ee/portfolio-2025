@@ -79,29 +79,37 @@ export const ProjectCard = ({
 
         <CardFooter className="flex justify-start gap-2.5 flex-wrap pt-0">
           {link && (
-            <Button variant="ghost" size="default" asChild className="group/link-btn text-sm px-3">
-              <a href={link} target="_blank" rel="noopener noreferrer">
-                <span className="mr-1">View Project</span>
-                <ArrowRight
-                  size={16}
-                  className="transition-transform duration-300 group-hover/link-btn:translate-x-1"
-                />
-              </a>
+            <Button
+              variant="ghost"
+              size="default"
+              className="group/link-btn text-sm px-3"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                window.open(link, "_blank", "noopener,noreferrer");
+              }}
+            >
+              <span className="mr-1">View Project</span>
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover/link-btn:translate-x-1" />
             </Button>
           )}
 
-          <Button variant="ghost" size="default" asChild className="group/repo-btn text-sm px-3">
-            <a href={repo} target="_blank" rel="noopener noreferrer">
-              <span className="mr-1">View Repo</span>
-              {!link ? (
-                <ArrowRight
-                  size={16}
-                  className="transition-transform duration-300 group-hover/repo-btn:translate-x-1"
-                />
-              ) : (
-                <SiGithub size={16} />
-              )}
-            </a>
+          <Button
+            variant="ghost"
+            size="default"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              window.open(repo, "_blank", "noopener,noreferrer");
+            }}
+            className="group/repo-btn text-sm px-3"
+          >
+            <span className="mr-1">View Repo</span>
+            {!link ? (
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover/repo-btn:translate-x-1" />
+            ) : (
+              <SiGithub size={16} />
+            )}
           </Button>
         </CardFooter>
       </Card>

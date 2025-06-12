@@ -54,7 +54,7 @@ export const Navbar = () => {
             "hidden md:flex w-max *:text-xl *:p-2.5 *:transition-all *:duration-500 [&_a]:hover:text-accent",
           )}
         >
-          <Link to="/#myProjects">Projects</Link>
+          <Link to="/#projects">Projects</Link>
           <Link to="/#aboutMe">Me</Link>
           <Link to="/#contactMe">Contact</Link>
         </nav>

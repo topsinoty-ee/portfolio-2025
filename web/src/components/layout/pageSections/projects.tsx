@@ -45,7 +45,7 @@ const ProjectsList = () => {
 export const MyProjects = () => {
   return (
     <section
-      id="myProjects"
+      id="projects"
       className="w-full flex flex-col gap-15 md:gap-20 h-full items-center min-h-[calc(100vh-10rem)]"
     >
       <div className="gap-10 flex flex-col w-full">

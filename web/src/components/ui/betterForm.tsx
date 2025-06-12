@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Check, ChevronsUpDown, Loader2, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -39,8 +39,8 @@ interface SmartSelectFieldConfig {
   searchVisibilityThreshold?: number;
 }
 
-interface FormFieldConfig<TFieldValues extends FieldValues> {
-  name: FieldPath<TFieldValues>;
+interface FormFieldConfig<FieldValuesType extends FieldValues> {
+  name: FieldPath<FieldValuesType>;
   label: string;
   placeholder?: string;
   type?: FormFieldType;
@@ -51,22 +51,22 @@ interface FormFieldConfig<TFieldValues extends FieldValues> {
   selectConfig?: SmartSelectFieldConfig;
 }
 
-interface BetterFormCallbackUtils<TFieldValues extends FieldValues> extends UseFormReturn<TFieldValues> {
+interface BetterFormCallbackUtils<FieldValuesType extends FieldValues> extends UseFormReturn<FieldValuesType> {
   toast: typeof toast;
 }
 
-interface BetterFormProps<TFieldValues extends FieldValues> {
-  formSchema: z.ZodSchema<TFieldValues>;
-  fields: readonly FormFieldConfig<TFieldValues>[];
-  onSubmit: (values: TFieldValues) => Promise<void>;
-  defaultValues?: DefaultValues<TFieldValues>;
+interface BetterFormProps<FieldValuesType extends FieldValues> {
+  formSchema: z.ZodSchema<FieldValuesType>;
+  fields: readonly FormFieldConfig<FieldValuesType>[];
+  onSubmit: (values: FieldValuesType) => Promise<void>;
+  defaultValues?: DefaultValues<FieldValuesType>;
   submitButtonText?: string;
   className?: string;
-  onSuccess?: (data: TFieldValues, utils: BetterFormCallbackUtils<TFieldValues>) => void;
-  onError?: (error: unknown, utils: BetterFormCallbackUtils<TFieldValues>) => void;
+  onSuccess?: (data: FieldValuesType, utils: BetterFormCallbackUtils<FieldValuesType>) => void;
+  onError?: (error: unknown, utils: BetterFormCallbackUtils<FieldValuesType>) => void;
 }
 
-export function BetterForm<TFieldValues extends FieldValues>({
+export function BetterForm<FieldValuesType extends FieldValues>({
   formSchema,
   fields,
   onSubmit,
@@ -75,14 +75,14 @@ export function BetterForm<TFieldValues extends FieldValues>({
   className = "",
   onSuccess,
   onError,
-}: BetterFormProps<TFieldValues>) {
-  const form = useForm<TFieldValues>({
+}: BetterFormProps<FieldValuesType>) {
+  const form = useForm<FieldValuesType>({
     resolver: zodResolver(formSchema),
     defaultValues,
     mode: "onChange",
   });
 
-  const callbackUtils: BetterFormCallbackUtils<TFieldValues> = useMemo(
+  const callbackUtils: BetterFormCallbackUtils<FieldValuesType> = useMemo(
     () => ({
       ...form,
       toast,
@@ -91,7 +91,7 @@ export function BetterForm<TFieldValues extends FieldValues>({
   );
 
   const handleSubmit = useCallback(
-    async (data: TFieldValues) => {
+    async (data: FieldValuesType) => {
       try {
         await onSubmit(data);
         toast.success("Form submitted successfully!");
@@ -106,8 +106,8 @@ export function BetterForm<TFieldValues extends FieldValues>({
 
   const renderField = useCallback(
     (
-      fieldConfig: FormFieldConfig<TFieldValues>,
-      field: ControllerRenderProps<TFieldValues, FieldPath<TFieldValues>>,
+      fieldConfig: FormFieldConfig<FieldValuesType>,
+      field: ControllerRenderProps<FieldValuesType, FieldPath<FieldValuesType>>,
     ) => {
       const commonProps = {
         disabled: fieldConfig.disabled || false,
@@ -173,22 +173,22 @@ export function BetterForm<TFieldValues extends FieldValues>({
   );
 }
 
-interface SmartSelectProps<TFieldValues extends FieldValues> {
+interface SmartSelectProps<FieldValuesType extends FieldValues> {
   fieldType: "select" | "multiselect";
-  fieldConfig: FormFieldConfig<TFieldValues>;
-  field: ControllerRenderProps<TFieldValues, FieldPath<TFieldValues>>;
-  formInstance: UseFormReturn<TFieldValues>;
+  fieldConfig: FormFieldConfig<FieldValuesType>;
+  field: ControllerRenderProps<FieldValuesType, FieldPath<FieldValuesType>>;
+  formInstance: UseFormReturn<FieldValuesType>;
   disabled?: boolean;
   placeholder?: string;
 }
 
-function SmartSelect<TFieldValues extends FieldValues>({
+function SmartSelect<FieldValuesType extends FieldValues>({
   fieldType,
   fieldConfig,
   field,
   disabled = false,
   placeholder,
-}: SmartSelectProps<TFieldValues>) {
+}: SmartSelectProps<FieldValuesType>) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<SelectOption[]>([]);
@@ -216,7 +216,7 @@ function SmartSelect<TFieldValues extends FieldValues>({
 
   const currentFieldValue = field.value;
   const selectedValues: string[] = isMultiselect ? (Array.isArray(currentFieldValue) ? currentFieldValue : []) : [];
-  const singleValue: string = isMultiselect ? "" : typeof currentFieldValue === "string" ? currentFieldValue : "";
+  const singleValue: string = isMultiselect ? "" : "";
 
   const shouldShowSearch = useMemo(() => {
     if (mode === "async") return true;
@@ -371,7 +371,7 @@ function SmartSelect<TFieldValues extends FieldValues>({
   }, [isMultiselect, allAvailableOptions, singleValue, placeholder]);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: KeyboardEvent) => {
       if (e.key === "Enter" && allowCustomValues && isMultiselect && searchQuery.trim()) {
         e.preventDefault();
         handleAddCustomValue(searchQuery);

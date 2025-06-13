@@ -16,6 +16,7 @@
     "@auth0/auth0-react": "^2.3.0",
     "@hookform/resolvers": "^5.0.1",
     "@icons-pack/react-simple-icons": "^12.9.0",
+    "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-popover": "^1.1.14",
@@ -65,5 +66,6 @@
     "typescript-eslint": "^8.33.1",
     "vite": "^6.3.5"
   },
-  "packageManager": "pnpm@10.11.1"
+  "packageManager": "pnpm@10.11.1",
+  "concurrent": true
 }

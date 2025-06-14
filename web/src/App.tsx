@@ -3,7 +3,7 @@ import { Footer } from "./components/layout/footer";
 import { useFlashlight } from "./hooks/flashlight";
 import { IndexPage } from "@/pages/index.tsx";
 import { LoginPage } from "./pages/login.tsx";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
 import { ProjectsPage } from "@/pages/projects";
 import { ProjectPage } from "@/pages/projects/detail.tsx";
 import { EditProjectPage } from "@/pages/projects/edit.tsx";
@@ -11,7 +11,8 @@ import { useScrollToTop } from "@/useScrollToTop.ts";
 
 export default function App() {
   const { gradientPosition, scrollPosition } = useFlashlight();
-  useScrollToTop();
+  const [location] = useLocation();
+  useScrollToTop(location.startsWith("/projects") ? { behavior: "instant" } : { behavior: "smooth" });
 
   return (
     <>

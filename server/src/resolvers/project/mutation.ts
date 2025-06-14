@@ -79,6 +79,7 @@ export const ProjectMutations: MutationResolvers = {
 
       const saved = await Project.create({
         ...payload,
+        description: payload.description?.trim() ?? "",
         title,
       });
 

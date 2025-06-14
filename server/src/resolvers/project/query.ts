@@ -58,6 +58,9 @@ export const ProjectQueries: QueryResolvers = {
 
     try {
       const projects = await Project.find(mongoFilter).lean();
+      if (!projects || projects.length === 0) {
+        return [];
+      }
       return projects.map(mapDocument);
     } catch (err) {
       throw new GraphQLError(

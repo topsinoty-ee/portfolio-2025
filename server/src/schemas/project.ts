@@ -3,6 +3,7 @@ import { model, Schema } from "mongoose";
 const projectSchema = new Schema(
   {
     title: { type: String, required: true, unique: true, trim: true },
+    description: { type: String, required: true, trim: true, maxlength: 150 },
     content: { type: String, required: true },
     link: { type: String, trim: true },
     repo: {

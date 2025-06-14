@@ -1,6 +1,7 @@
 type Project {
     id: ID!
     title: String!
+    description: String!
     content: String!
     link: String
     repo: String
@@ -47,6 +48,7 @@ type Comment {
 input ProjectInput {
     title: String!
     content: String!
+    description: String!
     link: String
     repo: String
     for: String
@@ -57,6 +59,7 @@ input ProjectInput {
 input ProjectUpdateInput {
     title: String
     content: String
+    description: String
     link: String
     repo: String
     collaborators: [String!]

@@ -48,27 +48,23 @@ export function useScrollToTop(options: ScrollToOptions = { behavior: "smooth" }
           }
 
           const offset = 64;
-          const top = rect.top + window.scrollY - offset;
+          const top = window.pageYOffset + rect.top - offset;
 
           try {
             window.scrollTo({ top, left: 0, ...optionsRef.current });
           } catch {
             window.scrollTo(0, top);
+            return true;
           }
-
           return true;
         };
 
         requestAnimationFrame(() => {
           if (!scrollToElement()) {
             setTimeout(() => {
-              requestAnimationFrame(() => {
-                if (!scrollToElement()) {
-                  setTimeout(() => {
-                    requestAnimationFrame(scrollToElement);
-                  }, 200);
-                }
-              });
+              if (!scrollToElement()) {
+                setTimeout(() => scrollToElement(), 200);
+              }
             }, 50);
           }
         });

@@ -58,14 +58,16 @@ export const Navbar = () => {
           <Link to="/#aboutMe">Me</Link>
           <Link to="/#contactMe">Contact</Link>
         </nav>
-        <Button
-          onClick={toggle}
-          className={cn("hidden md:block hover:bg-secondary")}
-          variant={"ghost"}
-          aria-label={enabled ? "Disable flashlight" : "Enable flashlight"}
-        >
-          {enabled ? <Flashlight /> : <FlashlightOff />}
-        </Button>
+        {location === "/" && (
+          <Button
+            onClick={toggle}
+            className={cn("hidden md:block hover:bg-secondary")}
+            variant={"ghost"}
+            aria-label={enabled ? "Disable flashlight" : "Enable flashlight"}
+          >
+            {enabled ? <Flashlight /> : <FlashlightOff />}
+          </Button>
+        )}
       </div>
     </header>
   );

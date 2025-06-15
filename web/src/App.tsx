@@ -16,13 +16,15 @@ export default function App() {
 
   return (
     <>
-      <div
-        className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
-        style={{
-          backgroundImage: gradientPosition(),
-          opacity: Math.max(0, 1 - scrollPosition / ((window.visualViewport?.height || 500) * 2)),
-        }}
-      />
+      {location === "/" && (
+        <div
+          className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
+          style={{
+            backgroundImage: gradientPosition(),
+            opacity: Math.max(0, 1 - scrollPosition / ((window.visualViewport?.height || 500) * 2)),
+          }}
+        />
+      )}
       <Navbar />
       <main className="md:pt-10 pt-5 relative bg-background p-10 md:p-20 min-h-screen h-max flex flex-col md:gap-25 gap-10 scroll-smooth">
         <Switch>

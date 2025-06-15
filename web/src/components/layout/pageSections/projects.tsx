@@ -56,9 +56,9 @@ export const MyProjects = () => {
 
         <Suspense
           fallback={
-            <div className="grid grid-cols-1 md:grid-cols-2 w-full h-full gap-10">
-              {[...Array(4)].map((_, i) => (
-                <Skeleton key={i} className="h-[200px] w-full rounded-lg bg-muted" />
+            <div className="grid grid-cols-1 md:grid-cols-2 w-full h-full gap-10 transition-all duration-300">
+              {[...Array(2)].map((_, i) => (
+                <Skeleton key={i} className="h-[200px] w-full rounded-lg bg-muted transition-all" />
               ))}
             </div>
           }
@@ -77,7 +77,7 @@ export const MyProjects = () => {
         <Button variant={"link"} asChild className={"font-medium"}>
           <Link to="/projects">
             <Luggage />
-            Some of my projects
+            Other projects
           </Link>
         </Button>
       </div>

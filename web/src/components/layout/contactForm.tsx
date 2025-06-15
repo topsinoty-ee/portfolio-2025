@@ -23,7 +23,7 @@ export const ContactForm = () => {
 
   return (
     <BetterForm
-      className="flex flex-col gap-5 justify-between h-full max-w-md w-full bg-card p-5 border-card rounded-2xl drop-shadow-accent drop-shadow-sm"
+      className="h-full max-w-md w-full bg-card p-5 border-card rounded-2xl drop-shadow-accent drop-shadow-sm"
       formSchema={contactFormSchema}
       fields={[
         { name: "name", placeholder: "John Doe", required: true },
@@ -31,7 +31,6 @@ export const ContactForm = () => {
         {
           name: "message",
           placeholder: "Your message here...",
-          description: "Just a message or smth small",
           type: "textarea",
           required: true,
         },

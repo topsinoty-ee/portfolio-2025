@@ -10,6 +10,7 @@ export const PROJECT_FRAGMENT = gql`
     createdAt
     updatedAt
     collaborators
+    description
     link
     repo
     skillsRequired
@@ -46,7 +47,13 @@ export const GET_PROJECTS = gql`
 export const GET_FEATURED_PROJECTS = gql`
   query GetFeaturedProjects {
     projects(filterBy: { isFeatured: true }) {
-      ...ProjectFields
+      id
+      title
+      description
+      skillsRequired
+      collaborators
+      link
+      repo
     }
   }
   ${PROJECT_FRAGMENT}

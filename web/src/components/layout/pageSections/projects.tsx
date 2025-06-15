@@ -1,13 +1,14 @@
 import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ProjectCard } from "@/components/ui/projectCard";
+import { FeaturedProjectCard } from "@/components/ui/projectCard";
 import { SectionHeader } from "@/components/ui/sectionHeader";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import { useGetFeaturedProjectsSuspenseQuery } from "@/generated/graphql";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { TriangleAlert } from "lucide-react";
+import { Luggage, TriangleAlert } from "lucide-react";
+import { Link } from "wouter";
 
 const ProjectsList = () => {
   const { data, error } = useGetFeaturedProjectsSuspenseQuery();
@@ -27,17 +28,9 @@ const ProjectsList = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 w-full h-full gap-10">
-      {data.projects.map((project) => (
-        <ProjectCard
-          {...project}
-          key={project.id}
-          title={project.title}
-          // description={project.description}
-          tags={project.skillsRequired}
-          link={project.link || undefined}
-          repo={project.repo ?? ""}
-        />
-      ))}
+      {data.projects.map((project) => {
+        return <FeaturedProjectCard {...project} key={project.id} tags={project.skillsRequired} />;
+      })}
     </div>
   );
 };
@@ -74,12 +67,18 @@ export const MyProjects = () => {
         </Suspense>
       </div>
 
-      <div className="w-full flex items-center justify-center">
+      <div className="w-full flex items-center gap-4 justify-start">
         <Button variant={"outline"} asChild>
-          <a href="https://github.com/topsinoty-ee?tab=repositories" target={"_blank"} rel={"noopener noreferrer"}>
+          <Link to="https://github.com/topsinoty-ee?tab=repositories" target={"_blank"} rel={"noopener noreferrer"}>
             <SiGithub />
             My repos
-          </a>
+          </Link>
+        </Button>
+        <Button variant={"link"} asChild className={"font-medium"}>
+          <Link to="/projects">
+            <Luggage />
+            Some of my projects
+          </Link>
         </Button>
       </div>
     </section>

@@ -38,7 +38,15 @@ export const COMMENT_FRAGMENT = gql`
 export const GET_PROJECTS = gql`
   query GetProjects {
     projects {
-      ...ProjectFields
+      id
+      title
+      description
+      skillsRequired
+      collaborators
+      link
+      repo
+      isFeatured
+      updatedAt
     }
   }
   ${PROJECT_FRAGMENT}

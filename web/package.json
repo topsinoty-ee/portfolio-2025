@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "codegen": "graphql-codegen",
+    "codegen": "rm -rf src/generated && graphql-codegen",
     "prepare": "pnpm codegen"
   },
   "dependencies": {

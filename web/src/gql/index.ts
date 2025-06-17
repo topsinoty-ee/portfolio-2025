@@ -47,6 +47,7 @@ export const GET_PROJECTS = gql`
       repo
       isFeatured
       updatedAt
+      for
     }
   }
   ${PROJECT_FRAGMENT}

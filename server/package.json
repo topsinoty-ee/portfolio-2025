@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "codegen": "graphql-codegen --config codegen.ts",
+    "codegen": "graphql-codegen --config src/codegen.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "prepare": "pnpm codegen",

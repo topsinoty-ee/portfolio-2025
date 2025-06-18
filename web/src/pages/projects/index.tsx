@@ -25,9 +25,9 @@ const openInNewTab = (url: string) => {
   window.open(url, "_blank", "noopener,noreferrer");
 };
 
-const ProjectCard: FC<GetProjectsQuery["projects"][number]> = memo(
+export const ProjectCard: FC<Omit<GetProjectsQuery["projects"][number], "updatedAt"> & { updatedAt?: string }> = memo(
   ({ title, description, link, repo, for: forWho, skillsRequired, id, isFeatured, collaborators, updatedAt }) => {
-    const formattedDate = format(new Date(updatedAt), "MMM dd, yyyy");
+    const formattedDate = updatedAt && format(new Date(updatedAt), "MMM dd, yyyy");
 
     return (
       <div className="break-inside-avoid mb-6 group relative">
@@ -103,9 +103,11 @@ const ProjectCard: FC<GetProjectsQuery["projects"][number]> = memo(
                     </>
                   )}
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <span>{formattedDate}</span>
-                </div>
+                {formattedDate && (
+                  <div className="flex items-center gap-1 shrink-0">
+                    <span>{formattedDate}</span>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-2">

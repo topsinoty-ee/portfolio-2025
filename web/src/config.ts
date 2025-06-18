@@ -4,4 +4,5 @@ export default {
   apiUrl: import.meta.env.VITE_API_URL,
   audience: import.meta.env.VITE_AUTH0_AUDIENCE,
   scope: import.meta.env.VITE_AUTH0_SCOPE,
+  admin: import.meta.env.VITE_ADMIN_EMAIL,
 };

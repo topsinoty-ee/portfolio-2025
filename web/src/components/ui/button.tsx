@@ -49,14 +49,12 @@ function Button({
 }
 
 function LoginButton(props: React.ComponentProps<typeof Button>) {
-  const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const { loginWithPopup, isAuthenticated } = useAuth0();
 
   return (
-    <Button
-      {...props}
-      className={cn(props?.className, { hidden: isAuthenticated })}
-      onClick={() => loginWithRedirect()}
-    />
+    <Button {...props} className={cn(props?.className, { hidden: isAuthenticated })} onClick={() => loginWithPopup()}>
+      Login
+    </Button>
   );
 }
 
@@ -68,7 +66,9 @@ function LogoutButton(props: React.ComponentProps<typeof Button>) {
       {...props}
       className={cn(props?.className, { hidden: !isAuthenticated })}
       onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-    />
+    >
+      Logout
+    </Button>
   );
 }
 

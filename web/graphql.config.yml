@@ -1,0 +1,17 @@
+schema: "http://localhost:4000/graphql"
+documents: "./src/**/*.{graphql,ts,tsx,js,jsx}"
+extensions:
+  codegen:
+    generates:
+      ./src/generated/graphql.ts:
+        plugins:
+          - "typescript"
+          - "typescript-operations"
+          - "typescript-react-apollo"
+        config:
+          withHooks: true
+          apolloReactCommonImportFrom: "@apollo/client"
+          apolloReactHooksImportFrom: "@apollo/client"
+          preResolveTypes: true
+          scalars:
+            DateTime: "string"

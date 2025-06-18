@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { SectionHeader } from "@/components/ui/sectionHeader";
 import { Button } from "@/components/ui/button";
 import { DataCard } from "../dataCard";
+import { Link } from "wouter";
 
 export const Hero = () => (
   <section className="flex-col flex gap-0 md:gap-20 md:flex-row w-full h-full max-h-max">
@@ -32,10 +33,10 @@ export const Hero = () => (
 
       <div className="flex gap-2.5 md:gap-5 *:font-semibold">
         <Button variant={"secondary"} asChild>
-          <a href="#contactMe">Contact me</a>
+          <Link to="#contactMe">Contact me</Link>
         </Button>
         <Button variant={"link"} className="text-secondary" asChild>
-          <a href="#myProjects">View my projects</a>
+          <Link to="/projects">View my projects</Link>
         </Button>
       </div>
     </div>

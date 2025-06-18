@@ -21,7 +21,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ type = "primary", 
           "text-2xl md:text-3xl": size === "md",
           "text-lg md:text-xl": size === "sm",
         },
-        className
+        className,
       )}
     />
   );

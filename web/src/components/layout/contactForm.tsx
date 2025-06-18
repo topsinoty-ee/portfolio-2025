@@ -1,14 +1,7 @@
 "use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormField, FormItem, FormControl, FormMessage } from "../ui/form";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import { toast, Toaster } from "sonner";
-import { SectionHeader } from "../ui/sectionHeader";
+import { BetterForm } from "@/components/ui/betterForm.tsx";
+import { toast } from "sonner";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -16,82 +9,39 @@ const contactFormSchema = z.object({
   message: z.string().min(10, "Message must be at least 10 characters."),
 });
 
-type ContactFormValues = z.infer<typeof contactFormSchema>;
-
-const defaultValues: ContactFormValues = {
-  name: "",
-  email: "",
-  message: "",
-};
-
-const fields: {
-  name: keyof ContactFormValues;
-  label: string;
-  placeholder: string;
-  type?: "text" | "email" | "tel" | "textarea";
-}[] = [
-  { name: "name", label: "Full Name", placeholder: "John Doe" },
-  { name: "email", label: "Email", placeholder: "john@example.com", type: "email" },
-  { name: "message", label: "Message", placeholder: "Your message here...", type: "textarea" },
-];
-
 export const ContactForm = () => {
-  const form = useForm<ContactFormValues>({
-    resolver: zodResolver(contactFormSchema),
-    defaultValues,
-  });
-
-  const onSubmit = async (values: ContactFormValues) => {
+  const handleSubmit = async (values: any) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log(values);
-      toast.success("Form submitted successfully!", {
-        description: "We'll get back to you soon.",
-      });
-      form.reset();
+      console.log("Form submitted with values:", values);
+      toast.success("Message sent successfully!");
     } catch (error) {
-      toast.error("Something went wrong.", {
-        description: `Please try again later. ${error instanceof Error ? error.message : String(error)}`,
-      });
+      console.error(error);
+      toast.error("Failed to send message. Please try again later.");
+      return Promise.reject(error);
     }
   };
 
   return (
-    <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-5 justify-between h-full max-w-md w-full bg-card p-5 border-card rounded-2xl drop-shadow-accent drop-shadow-sm"
-        >
-          <SectionHeader type="info">Send me a message</SectionHeader>
-          <div className="flex flex-col gap-3">
-            {fields.map(({ name, label, placeholder, type = "text" }) => (
-              <FormField
-                key={name}
-                control={form.control}
-                name={name}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl title={label}>
-                      {type === "textarea" ? (
-                        <Textarea placeholder={placeholder} {...field} />
-                      ) : (
-                        <Input placeholder={placeholder} type={type} {...field} />
-                      )}
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ))}
-          </div>
-
-          <Button type="submit" className="w-full md:mt-5" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Submitting..." : "Send Message"}
-          </Button>
-        </form>
-      </Form>
-      <Toaster />
-    </>
+    <BetterForm
+      className="h-full max-w-md w-full bg-card p-5 border-card rounded-2xl drop-shadow-accent drop-shadow-sm"
+      formSchema={contactFormSchema}
+      fields={[
+        { name: "name", placeholder: "John Doe", required: true },
+        { name: "email", placeholder: "mail@example.com", required: true },
+        {
+          name: "message",
+          placeholder: "Your message here...",
+          type: "textarea",
+          required: true,
+        },
+      ]}
+      defaultValues={{
+        name: "",
+        email: "",
+        message: "",
+      }}
+      onSubmit={handleSubmit}
+      onSuccess={(_, { reset }) => reset()}
+    />
   );
 };

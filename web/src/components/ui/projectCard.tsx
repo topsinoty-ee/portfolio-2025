@@ -1,97 +1,151 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SiGithub } from "@icons-pack/react-simple-icons";
-import { ArrowRight, Users } from "lucide-react";
-import { ReactNode } from "react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import { Globe, Star, Users } from "lucide-react";
+import { Link } from "wouter";
+import { GetFeaturedProjectsQuery } from "@/generated/graphql";
+import { cn } from "@/lib/utils.ts";
 
-interface BaseProjectCardProps {
-  title: string;
-  description?: string;
+interface FeaturedProjectCardProps
+  extends Omit<GetFeaturedProjectsQuery["projects"][number], "__typename" | "skillsRequired"> {
   tags: string[];
-  repo: string;
-  link?: string;
   className?: string;
 }
 
-interface SoloProjectProps extends BaseProjectCardProps {
-  solo: true;
-}
+const openInNewTab = (url: string) => {
+  window.open(url, "_blank", "noopener,noreferrer");
+};
 
-interface TeamProjectProps extends BaseProjectCardProps {
-  solo?: false;
-  groupDescription?: ReactNode;
-}
-
-type ProjectCardProps = SoloProjectProps | TeamProjectProps;
-
-export const ProjectCard = ({
+export const FeaturedProjectCard = ({
+  id,
   title,
   description,
   tags,
   link,
-  className,
   repo,
-  solo = false,
-  ...props
-}: ProjectCardProps) => {
+  collaborators,
+  className,
+}: FeaturedProjectCardProps) => {
   return (
-    <Card
-      className={`hover:drop-shadow-primary hover:-translate-y-1 drop-shadow-sm **:transition-all **:duration-300 transition-all duration-300 group/projCard overflow-hidden ${className}`}
-    >
-      <CardHeader>
-        <CardTitle className="text-lg font-bold flex items-baseline gap-2 group-hover/projCard:text-accent">
-          {title}
-          {!solo && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant={"outline"}>
-                    <Users size={16} />
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {("groupDescription" in props && props.groupDescription) || "Team Project"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </CardTitle>
-        <CardDescription className="line-clamp-2">{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-      <CardFooter className="flex gap-2.5">
-        {link && (
-          <Button variant="ghost" size="md" className="button-hover" asChild>
-            <a href={link} target="_blank" rel="noopener noreferrer">
-              <span className="mr-1">View Project</span>
-              <ArrowRight size={16} className="delay-500 duration-100 group-hover/projCard:animate-bounce-right" />
-            </a>
-          </Button>
-        )}
-        <Button variant="ghost" size="md" className="button-hover" asChild>
-          <a href={repo} target="_blank" rel="noopener noreferrer">
-            <span className="mr-1">View repo</span>
-            {!link ? (
-              <ArrowRight
-                size={16}
-                className={`transition-transform duration-300 group-hover/projCard:transform group-hover/projCard:translate-x-1`}
-              />
-            ) : (
-              <SiGithub />
+    <div className="group relative">
+      {/* Gradient border effect */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-all duration-500" />
+
+      <div className="relative">
+        <Link to={`/projects/${id}`}>
+          <Card
+            className={cn(
+              "relative bg-card/95 backdrop-blur-sm border border-border hover:border-border/80 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group-hover:-translate-y-1",
+              className,
             )}
-          </a>
-        </Button>
-      </CardFooter>
-    </Card>
+          >
+            {/* Featured badge */}
+            <div className="absolute top-4 right-4 z-10">
+              <div className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-medium border border-primary/20">
+                <Star className="size-3 fill-current" />
+                Featured
+              </div>
+            </div>
+
+            <div className="block p-6 hover:bg-secondary/5 transition-all duration-300">
+              <CardHeader className="p-0 mb-4">
+                <CardTitle className="flex items-start justify-between text-xl font-bold">
+                  <span className="line-clamp-2 group-hover:text-primary transition-colors duration-300 pr-4">
+                    {title.slice(0, 1).toUpperCase() + title.slice(1, title.length)}
+                  </span>
+                </CardTitle>
+                <CardDescription className="line-clamp-3 leading-relaxed text-sm text-muted-foreground">
+                  {!description ? "No description set" : description}
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="p-0">
+                {/* Tags section */}
+                {tags && tags.length > 0 && (
+                  <div className="mb-4">
+                    <div className="flex flex-wrap gap-2 max-h-20 overflow-y-auto">
+                      {tags.slice(0, 6).map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="secondary"
+                          className="bg-muted/50 text-foreground px-3 py-1 rounded-full text-xs font-medium border border-border hover:border-border/80 transition-colors duration-200"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                      {tags.length > 6 && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs text-muted-foreground px-3 py-1 rounded-full bg-muted/20"
+                        >
+                          +{tags.length - 6} more
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Separator */}
+                <div className="border-t border-border/50 my-4" />
+
+                {/* Footer section */}
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1 min-w-0 flex-1">
+                      {collaborators.length > 0 ? (
+                        <>
+                          <Users className="size-3 shrink-0" />
+                          <span className="ml-1 truncate">
+                            {collaborators.length} collaborator{collaborators.length === 1 ? "" : "s"}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Users className="size-3 shrink-0 opacity-50" />
+                          <span className="ml-1 truncate opacity-50">Solo project</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex items-center gap-2">
+                    {link && (
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          openInNewTab(link);
+                        }}
+                        variant="ghost"
+                        className="opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-muted hover:text-foreground"
+                        title="View live demo"
+                      >
+                        <Globe className="size-4" />
+                      </Button>
+                    )}
+                    {repo && (
+                      <Button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          openInNewTab(repo);
+                        }}
+                        variant="ghost"
+                        className="opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-muted hover:text-foreground"
+                        title="View source code"
+                      >
+                        <SiGithub className="size-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </div>
+          </Card>
+        </Link>
+      </div>
+    </div>
   );
 };

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { useAuth0 } from "@auth0/auth0-react";
 
 import { cn } from "@/lib/utils";
 
@@ -29,7 +30,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 );
 
 function Button({
@@ -47,4 +48,28 @@ function Button({
   return <Comp data-slot="button" className={cn(buttonVariants({ variant, size, className }), "button")} {...props} />;
 }
 
-export { Button, buttonVariants };
+function LoginButton(props: React.ComponentProps<typeof Button>) {
+  const { loginWithPopup, isAuthenticated } = useAuth0();
+
+  return (
+    <Button {...props} className={cn(props?.className, { hidden: isAuthenticated })} onClick={() => loginWithPopup()}>
+      Login
+    </Button>
+  );
+}
+
+function LogoutButton(props: React.ComponentProps<typeof Button>) {
+  const { logout, isAuthenticated } = useAuth0();
+
+  return (
+    <Button
+      {...props}
+      className={cn(props?.className, { hidden: !isAuthenticated })}
+      onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+    >
+      Logout
+    </Button>
+  );
+}
+
+export { Button, LoginButton, LogoutButton, buttonVariants };

@@ -15,7 +15,7 @@ export const useNowPlaying = () => {
     const fetchTrack = async () => {
       try {
         const res = await fetch(
-          "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=topsinoty&api_key=5567c519fb22b5203bdff414099a48ae&format=json&limit=1"
+          "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=topsinoty&api_key=5567c519fb22b5203bdff414099a48ae&format=json&limit=1",
         );
         const data = await res.json();
         const latest = data.recenttracks.track?.[0];

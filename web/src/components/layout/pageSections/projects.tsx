@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FeaturedProjectCard } from "@/components/ui/projectCard";
 import { SectionHeader } from "@/components/ui/sectionHeader";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import { useGetFeaturedProjectsSuspenseQuery } from "@/generated/graphql";
@@ -9,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Luggage, TriangleAlert } from "lucide-react";
 import { Link } from "wouter";
+import { ProjectCard } from "@/pages/projects";
 
 const ProjectsList = () => {
   const { data, error } = useGetFeaturedProjectsSuspenseQuery();
@@ -29,7 +29,7 @@ const ProjectsList = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 w-full h-full gap-10">
       {data.projects.map((project) => {
-        return <FeaturedProjectCard {...project} key={project.id} tags={project.skillsRequired} />;
+        return <ProjectCard {...project} key={project.id} isFeatured />;
       })}
     </div>
   );

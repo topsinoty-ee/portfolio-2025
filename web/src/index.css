@@ -128,6 +128,9 @@
     background-image: url("/60-lines.png");
     background-size: 100px 100px;
   }
+  :disabled{
+    @apply cursor-not-allowed opacity-50;
+  }
 }
 
 .button {
